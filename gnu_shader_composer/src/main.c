@@ -36,7 +36,9 @@ GtkWidget* console_txt_view;
 GtkWidget* fp_txt_view;
 GtkWidget* vp_txt_view;
 
-//GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
+#ifndef GL_FRAGMENT_PROGRAM_ARB /* crappy condition */
+GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
+#endif
 
 GtkTextTag *tag;
 
@@ -291,16 +293,15 @@ int main(int argc, char *argv[] )
   gtk_widget_show(main_window);
 
   /* !!! the GL extension must be loaded AFTER the gl widget was shown */
-/*   gdk_glext_vp =gdk_gl_get_GL_ARB_vertex_program(); */
-/*   if(NULL == gdk_glext_vp ) {  */
-/*       g_print("ERROR: Failed to init GL_ARB_vertex_program ext !/n"); */
-/*       exit(-1); */
-/*   } */
-  
+#ifndef GL_FRAGMENT_PROGRAM_ARB /* crappy condition */
+  gdk_glext_vp =gdk_gl_get_GL_ARB_vertex_program();
+  if(NULL == gdk_glext_vp ) { 
+      g_print("ERROR: Failed to init GL_ARB_vertex_program ext !/n");
+      exit(-1);
+  }
+#endif  
 /*   g_print("DEBUG: GL_ARB_vertex_program ext init success.../n"); */
 
-  //???
-  //init_gl_ext();
 
   gtk_main ();
 
