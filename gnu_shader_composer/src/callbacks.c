@@ -605,11 +605,11 @@ void on_toolbutton_compile_execute_shader_clicked(GtkWidget* widget, gpointer da
   gtk_text_buffer_get_start_iter(shaders->vp_buffer, &start );
   gtk_text_buffer_get_end_iter(shaders->vp_buffer, &end );
   txt =gtk_text_buffer_get_text(shaders->vp_buffer, &start, &end, FALSE );
-  g_printf("%u: Vertex Shader string:\n %s\n", counter++, txt );
+  g_printf("%u: Vertex Shader string:\n%s\n", counter++, txt );
 
   gtk_text_buffer_get_start_iter(shaders->fp_buffer, &start );
   gtk_text_buffer_get_end_iter(shaders->fp_buffer, &end );
   txt =gtk_text_buffer_get_text(shaders->fp_buffer, &start, &end, FALSE );    
-  g_printf("%u: Fragment Shader string:\n %s\n", counter++, txt );
+  g_printf("%u: Fragment Shader string:\n%s\n", counter++, txt );
   
 }
