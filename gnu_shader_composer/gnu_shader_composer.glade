@@ -322,13 +322,12 @@
 
 			  <child>
 			    <widget class="GtkDrawingArea" id="drawing_area">
-			  		<property name="width_request">200</property>
-			  		<property name="height_request">200</property>
-			  		<property name="visible">True</property>
-			  		<signal name="realize" handler="on_drawing_area_realize" after="yes" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
-			  		<signal name="configure_event" handler="on_drawing_area_configure_event" after="yes" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
-			  		<signal name="expose_event" handler="on_drawing_area_expose_event" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
-
+			      <property name="width_request">200</property>
+			      <property name="height_request">200</property>
+			      <property name="visible">True</property>
+			      <signal name="realize" handler="on_drawing_area_realize" after="yes" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
+			      <signal name="configure_event" handler="on_drawing_area_configure_event" after="yes" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
+			      <signal name="expose_event" handler="on_drawing_area_expose_event" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
 			    </widget>
 			  </child>
 			</widget>
