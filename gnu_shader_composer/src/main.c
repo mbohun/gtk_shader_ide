@@ -290,7 +290,7 @@ int main(int argc, char *argv[] )
 #ifdef OLD_GL_VERSION /* crappy condition */
   gdk_glext_vp =gdk_gl_get_GL_ARB_vertex_program();
   if(NULL == gdk_glext_vp ) { 
-      g_print("ERROR: Failed to init GL_ARB_vertex_program ext !/n");
+      g_print("ERROR: Failed to init GL_ARB_VERTEX_PROGRAM ext !\n");
       exit(-1);
   }
 
