@@ -85,6 +85,35 @@ static gchar* KEYWORDS_ARB_FP10[] =
     NULL
 };
 
+static guint handle_comment_separator(GtkTextBuffer* buf, gint j ) 
+{
+  GtkTextIter start;
+  GtkTextIter end;
+  gchar* str;
+
+  guint old_end_iter_offset =0;
+
+  gtk_text_buffer_get_iter_at_offset(buf, &start, j );
+  gtk_text_buffer_get_iter_at_offset(buf, &end, j+1 );
+  
+  str =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
+  
+  old_end_iter_offset =gtk_text_iter_get_offset(&end );
+
+  if((0 == g_ascii_strncasecmp(str, "#", 1 ) ) ) {
+    gtk_text_iter_forward_to_line_end(&end);
+
+    old_end_iter_offset = gtk_text_iter_get_offset(&end ) - old_end_iter_offset;
+
+    gtk_text_buffer_apply_tag_by_name(buf, "comment", &start, &end );
+
+    return old_end_iter_offset+1;
+  }
+
+  return 0;
+
+}
+
 static void handle_keyword(GtkTextBuffer* buf, gint s, gint e ) 
 {
     GtkTextIter start;
@@ -126,6 +155,7 @@ gboolean is_separator(const gchar* c )
       ||(0 == g_ascii_strncasecmp(c, ";", 1 ))
       ||(0 == g_ascii_strncasecmp(c, "\t", 1 ))
       ||(0 == g_ascii_strncasecmp(c, "\n", 1 ))
+      ||(0 == g_ascii_strncasecmp(c, "\r", 1 ))
       ||(0 == g_ascii_strncasecmp(c, "#", 1 )) )
 
     {
@@ -177,10 +207,14 @@ static void syntax_highlight_buffer()
 
       if(is_separator(txt ) ) {
 
+	gint co =0;
+
 	/* print the buffer */
 	//g_print("buffer: %s\n", tmp->str );
 
 	handle_keyword(buf,i, j );
+
+	co =handle_comment_separator(buf, j );
 
 	/* print the separator */
 	//g_print("separator: %s\n", txt );
@@ -188,7 +222,7 @@ static void syntax_highlight_buffer()
 	/* reset the buffer */
 	tmp =g_string_erase(tmp, 0, -1 );
 
-	i =j+1;
+	i =j+co+1;
 	break;
       }
 
@@ -839,36 +873,35 @@ gboolean on_vp_textview_toggle_overwrite(GtkWidget* widget, GdkEventMotion* even
 
 gboolean on_vp_textview_key_press_event(GtkWidget* widget, GdkEventMotion* event, gpointer data )
 {
-    g_printf("%u: on_vp_textview_key_press_event()\n", counter++ );
+  GtkTextIter start, end;
+  GtkTextBuffer* buf;
 
-    syntax_highlight_buffer();
+  g_printf("%u: on_vp_textview_key_press_event()\n", counter++ );
+
+  buf =gtk_text_view_get_buffer(vp_txt_view );
+  gtk_text_buffer_get_start_iter(buf, &start );
+  gtk_text_buffer_get_end_iter(buf, &end );
+  gtk_text_buffer_remove_all_tags(buf, &start, &end );
+  syntax_highlight_buffer();
   
-    return FALSE;
+  return FALSE;
 }
 
 gboolean on_vp_textview_key_release_event(GtkWidget* widget, GdkEventMotion* event, gpointer data )
 {
-/*     //GtkTextIter iter; */
-/*     GtkTextIter start, end; */
-/*     GtkTextBuffer *buffer; */
-/*     gchar* txt; */
-/*     //int i; */
   
-    g_printf("%u: on_vp_textview_key_release_event()\n", counter++ );
+  GtkTextIter start, end;
+  GtkTextBuffer* buf;
 
-/*     buffer = gtk_text_view_get_buffer(widget ); */
+  g_printf("%u: on_vp_textview_key_release_event()\n", counter++ );
 
-/*     gtk_text_buffer_get_start_iter(buffer, &start ); */
-/*     gtk_text_buffer_get_end_iter(buffer, &end ); */
-/*     txt =gtk_text_buffer_get_text(buffer, &start, &end, FALSE ); */
-    
-/*     g_printf("%u: on_vp_textview_key_release_event() text: %s \n", counter++, txt ); */
+  buf =gtk_text_view_get_buffer(vp_txt_view );
+  gtk_text_buffer_get_start_iter(buf, &start );
+  gtk_text_buffer_get_end_iter(buf, &end );
+  gtk_text_buffer_remove_all_tags(buf, &start, &end );
+  syntax_highlight_buffer();
 
-
-    syntax_highlight_buffer();
-
-
-    return FALSE;
+  return FALSE;
 }
 
 gboolean on_vp_textview_state_changed(GtkWidget* widget, GdkEventMotion* event, gpointer data )
