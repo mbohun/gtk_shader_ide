@@ -333,6 +333,10 @@
 			      <signal name="realize" handler="on_drawing_area_realize" after="yes" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
 			      <signal name="configure_event" handler="on_drawing_area_configure_event" after="yes" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
 			      <signal name="expose_event" handler="on_drawing_area_expose_event" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
+				<signal name="button_press_event" handler="button_press_event" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
+				<signal name="button_release_event" handler="button_release_event" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
+				<signal name="motion_notify_event" handler="motion_notify_event" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
+
 			    </widget>
 			  </child>
 			</widget>
