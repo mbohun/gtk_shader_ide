@@ -16,6 +16,8 @@
 
 #include "support.h"
 
+#include "callbacks.h"
+
 #ifdef G_OS_WIN32
 char *package_prefix;
 char *package_datadir;
@@ -25,7 +27,6 @@ char *package_datadir;
 /* globals for now */
 GtkWidget* main_window;
 GtkWidget* gsc_quit_dialog;
-
 
 int
 main(int argc, char *argv[] )
@@ -90,17 +91,89 @@ main(int argc, char *argv[] )
   //xml =glade_xml_new ("simple_gl_test.glade", NULL, NULL );
   //xml =glade_xml_new ("simple_simple.glade", NULL, NULL );
 
-  glade_xml_signal_autoconnect(xml );
+  //autoconnect does NOT work with data !
+  //glade_xml_signal_autoconnect(xml );
+
+  //char* name ="Martin Hoermann";
+  guint val =666;
+  guint* pval =&val;
+  
+  
+
+//  g_printf("ADDR: %u, NAME: %s\n", &name, name );
+
+  g_print("ADDR: %u, VAL: %u\n", pval, val );
+
+  glade_xml_signal_connect(xml, 
+			   "on_drawing_area_realize", 
+			   G_CALLBACK(on_drawing_area_realize ) );
+
+  glade_xml_signal_connect(xml, 
+			   "on_drawing_area_configure_event", 
+			   G_CALLBACK(on_drawing_area_configure_event ) );
+
+  glade_xml_signal_connect(xml, 
+			   "on_drawing_area_expose_event", 
+			   G_CALLBACK(on_drawing_area_expose_event ) );
+
+//
+  glade_xml_signal_connect(xml, 
+			   "button_press_event", 
+			   G_CALLBACK(button_press_event ) );
+  
+  glade_xml_signal_connect(xml, 
+			   "button_release_event", 
+			   G_CALLBACK(button_release_event ) );
+
+  glade_xml_signal_connect(xml, 
+			   "motion_notify_event", 
+			   G_CALLBACK(motion_notify_event ) );
+
+
+
+  glade_xml_signal_connect(xml, 
+			   "on_main_window_delete_event", 
+			   G_CALLBACK(on_main_window_delete_event) );
+
+  glade_xml_signal_connect_data(xml, 
+				"exit_dlg_button_no_clicked", 
+				G_CALLBACK(exit_dlg_button_no_clicked),
+				(gpointer)"Secret Squirell" );//test data
+
+  glade_xml_signal_connect(xml, 
+			   "exit_dlg_button_quit_clicked", 
+			   G_CALLBACK(exit_dlg_button_quit_clicked) );
+
+  glade_xml_signal_connect(xml, 
+			   "on_hpaned1_check_resize", 
+			   G_CALLBACK(on_hpaned1_check_resize ) );
+
+  glade_xml_signal_connect(xml, 
+			   "on_hpaned1_accept_position", 
+			   G_CALLBACK(on_hpaned1_accept_position ) );
+
+  glade_xml_signal_connect(xml, 
+			   "on_hpaned1_state_changed", 
+			   G_CALLBACK(on_hpaned1_state_changed ) );
+
+  glade_xml_signal_connect(xml, 
+			   "on_hpaned1_move_handle", 
+			   G_CALLBACK(on_hpaned1_move_handle ) );
+
+/*   glade_xml_signal_connect_data(xml, */
+/*       ); */
+
  
   main_window = glade_xml_get_widget(xml, "main_window" );
 
   //pre-create the dialogs
   gsc_quit_dialog =glade_xml_get_widget(xml, "exit_confirmation_dialog" );
-  //gtk_widget_set_parent(gsc_quit_dialog, main_window );
-/*   gtk_widget_set_parent_window(gsc_quit_dialog, //widget  */
-/* 			       main_window );   //parent */
 
-  gtk_container_set_reallocate_redraws (GTK_CONTAINER (main_window), TRUE );
+  //gtk_widget_set_parent(gsc_quit_dialog, main_window );
+  gtk_widget_set_parent_window(gsc_quit_dialog, //widget
+ 			       main_window );   //parent
+
+  gtk_container_set_reallocate_redraws (GTK_CONTAINER(main_window), TRUE );
 
   printf("drawing_area: %u\n", drawing_area );
   drawing_area = glade_xml_get_widget (xml, "drawing_area" );
