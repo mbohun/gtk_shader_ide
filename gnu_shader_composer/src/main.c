@@ -238,6 +238,36 @@ int main(int argc, char *argv[] )
 			     "foreground", "green",
 			     NULL );
 
+  gtk_text_buffer_create_tag(shader_buffers.fp_buffer, 
+			     "keyword-vp-header",
+			     "weight", 5000,
+			     "foreground", "red",
+			     NULL );
+
+  gtk_text_buffer_create_tag(shader_buffers.fp_buffer, 
+			     "keyword-vp-defs",
+			     "weight", 5000,
+			     "foreground", "purple",
+			     NULL );
+
+
+  gtk_text_buffer_create_tag(shader_buffers.fp_buffer, 
+			     "keyword-vp-instructions",
+			     "weight", 5000,
+			     "foreground", "blue",
+			     NULL );
+
+  gtk_text_buffer_create_tag(shader_buffers.fp_buffer, 
+			     "keyword-vp-builtins",
+			     "weight", 5000,
+			     "foreground", "black",
+			     NULL );
+
+  gtk_text_buffer_create_tag(shader_buffers.fp_buffer, 
+			     "comment",
+			     "style", PANGO_STYLE_ITALIC,
+			     "foreground", "green",
+			     NULL );
 
   glade_xml_signal_connect_data(xml, 
 				"on_toolbutton_compile_execute_shader_clicked", 
@@ -253,6 +283,10 @@ int main(int argc, char *argv[] )
 		   G_CALLBACK(vp_txt_buffer_changed_handler), 
 		   NULL );
 
+  g_signal_connect(gtk_text_view_get_buffer(fp_txt_view), 
+		   "changed", 
+		   G_CALLBACK(fp_txt_buffer_changed_handler), 
+		   NULL );
 
   gtk_widget_show(main_window);
 

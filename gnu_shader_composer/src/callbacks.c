@@ -2,11 +2,13 @@
 #  include <config.h>
 #endif
 
+#include <string.h>
+
 #include <gtk/gtk.h>
 
 //#include "gl_ext.h"
 
-//#include <gdk/gdkglglext.h>
+/* #include <gdk/gdkglglext.h> */
 
 #include "callbacks.h"
 #include "support.h"
@@ -20,23 +22,24 @@
 #define VIEW_SCALE_MAX 2.0
 #define VIEW_SCALE_MIN 0.5
 
+
 extern GtkWidget* main_window;
 extern GtkWidget* gsc_quit_dialog;
 extern GtkWidget* console_txt_view;
 
-extern GtkWidget* fp_txt_view;
-extern GtkWidget* vp_txt_view;
+extern GtkTextView* vp_txt_view;
+extern GtkTextView* fp_txt_view;
 
-/* private util functions */
+
+/* extern GdkGL_GL_ARB_vertex_program* gdk_glext_vp; */
 
 //debug msg counter
 static unsigned int counter =0;
 
-//extern GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
-
 static GtkWidget* gl_win;
 
 //extern GtkTextTag *tag;
+
 
 /* this is only a test, the real stuff will read this type of info from an external XML file */
 /* KEYWORDS_ARB_VP10_HEADER is not used yet, i have to come with something a bit more elegant */
@@ -82,35 +85,54 @@ static gchar* KEYWORDS_ARB_VP10_BUILTINS[] =
 
 static gchar* KEYWORDS_ARB_VP10_SEPARATORS[] =
 {
-    "#", " ", "\t", ".", ",", ";", "\r", "\n", //"", 
+    "#", " ", "\t", ".", ",", ";", "\r", "\n", "", 
     NULL
 };
 
-static gchar* KEYWORDS_ARB_FP10[] =
+
+static gchar* KEYWORDS_ARB_FP10_DEFS[] =
 {
-    "ABS", "ABS_SAT", "ADD", "ADD_SAT", "ALIAS", "ATTRIB",
+    "ALIAS", "ATTRIB",
+    "OPTION", "OUTPUT",
+    "PARAM",
+    "TEMP",
+    NULL
+    
+};
+
+static gchar* KEYWORDS_ARB_FP10_INSTRUCTIONS[] =
+{
+    "ABS", "ABS_SAT", "ADD", "ADD_SAT",
     "CMP", "CMP_SAT", "COS", "COS_SAT",
     "DP3", "DP3_SAT", "DP4", "DP4_SAT", "DPH", "DPH_SAT", "DST", "DST_SAT", 
-    "END", "EX2", "EX2_SAT", 
+    "EX2", "EX2_SAT", 
     "FLR", "FLR_SAT", "FRC", "FRC_SAT", 
-    "KILL", 
+    "KIL", 
     "LG2", "LG2_SAT", "LIT", "LIT_SAT", "LRP", "LRP_SAT",
     "MAD", "MAD_SAT", "MAX", "MAX_SAT", "MIN", "MIN_SAT", "MOV", "MOV_SAT", "MUL", "MUL_SAT", 
-    "OPTION", "OUTPUT", 
-    "PARAM", "POW", "POW_SAT", 
+    "POW", "POW_SAT", 
     "RCP", "RCP_SAT", "RSQ", "RSQ_SAT", 
     "SIN", "SIN_SAT", "SCS", "SCS_SAT", "SGE", "SGE_SAT", "SLT", "SLT_SAT", "SUB", "SUB_SAT", "SWZ", "SWZ_SAT", 
-    "TEMP", "TEX", "TEX_SAT", "TXB", "TXB_SAT", "TXP", "TXP_SAT", 
-    "XPD", "XPD_SAT", 
+    "TEX", "TEX_SAT", "TXB", "TXB_SAT", "TXP", "TXP_SAT", 
+    "XPD", "XPD_SAT",
+    NULL
+};
+
+static gchar* KEYWORDS_ARB_FP10_BUILTINS[] =
+{
     "fragment", 
     "program", 
     "result", 
     "state", 
-    "texture",
+    "texture", "texture[",
     NULL
 };
 
-
+static gchar* KEYWORDS_ARB_FP10_SEPARATORS[] =
+{
+    "#", " ", "\t", ".", ",", ";", "\r", "\n", "", 
+    NULL
+};
 
 gboolean is_separator(const gchar* c )
 {
@@ -151,6 +173,8 @@ static gboolean handle(GtkTextBuffer* buf, GtkTextIter* start, GtkTextIter* end,
     return FALSE;
 }
 
+static unsigned int header_handler_flag =-1;
+
 static void handle_text(GtkTextBuffer* buf, guint so, guint eo ) 
 {
     GtkTextIter start;
@@ -171,15 +195,29 @@ static void handle_text(GtkTextBuffer* buf, guint so, guint eo )
 
     /* get the actual text , and check if it is a keyword - this could be a optimized later */
     //txt =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
+    if(0==header_handler_flag) {
+	if(handle(buf, &start, &end, KEYWORDS_ARB_VP10_DEFS, "keyword-vp-defs" ) 
+	   || handle(buf, &start, &end, KEYWORDS_ARB_VP10_INSTRUCTIONS, "keyword-vp-instructions" ) 
+	   || handle(buf, &start, &end, KEYWORDS_ARB_VP10_BUILTINS, "keyword-vp-builtins" ) 
+	   
+	    ) {
+	
+	    return;
+	}
 
-    if(handle(buf, &start, &end, KEYWORDS_ARB_VP10_HEADER, "keyword-vp-header"  ) /* this needs to be custom */
-       || handle(buf, &start, &end, KEYWORDS_ARB_VP10_DEFS, "keyword-vp-defs" ) 
-       || handle(buf, &start, &end, KEYWORDS_ARB_VP10_INSTRUCTIONS, "keyword-vp-instructions" ) 
-       || handle(buf, &start, &end, KEYWORDS_ARB_VP10_BUILTINS, "keyword-vp-builtins" ) 
+    }
+    else if(1==header_handler_flag) {
+	if(handle(buf, &start, &end, KEYWORDS_ARB_FP10_DEFS, "keyword-vp-defs" ) 
+	   || handle(buf, &start, &end, KEYWORDS_ARB_FP10_INSTRUCTIONS, "keyword-vp-instructions" ) 
+	   || handle(buf, &start, &end, KEYWORDS_ARB_FP10_BUILTINS, "keyword-vp-builtins" ) 
+	   
+	    ) {
 	
-	) {
-	
-	return;
+	    return;
+	}
+    }
+    else {
+	//the program has no header
     }
 
 
@@ -197,7 +235,9 @@ static guint handle_separator(GtkTextBuffer* buf, guint so, guint eo )
     gtk_text_buffer_get_iter_at_offset(buf, &end, eo );
   
     txt =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
-  
+
+    gtk_text_buffer_remove_tag_by_name(buf, "comment", &start, &end );
+
     //is it a comment ?
     if((0 == g_ascii_strncasecmp(txt, "#", 1 ) ) ) {
 
@@ -237,6 +277,12 @@ static void handle_header(GtkTextBuffer* buf )
 
     if(0==strcmp(txt, "!!ARBvp1.0") ) {
 	gtk_text_buffer_apply_tag_by_name(buf, "keyword-vp-header", &start, &end );
+	header_handler_flag =0;
+    }
+
+    if(0==strcmp(txt, "!!ARBfp1.0") ) {
+	gtk_text_buffer_apply_tag_by_name(buf, "keyword-vp-header", &start, &end );
+	header_handler_flag =1;
     }
 
 }
@@ -267,11 +313,11 @@ static void handle_end(GtkTextBuffer* buf )
 
 }
 
-static void syntax_highlight_buffer()
+static void syntax_highlight_buffer(GtkTextBuffer* buf)
 {
 
   GString* tmp =g_string_new("");
-  GtkTextBuffer* buf =gtk_text_view_get_buffer(vp_txt_view );
+  //GtkTextBuffer* buf =gtk_text_view_get_buffer(vp_txt_view );
 
   const gint max =gtk_text_buffer_get_char_count(buf) + 1; /* +1 means to position */
 
@@ -290,13 +336,15 @@ static void syntax_highlight_buffer()
 
       txt =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
 
+      handle_text(buf, j, i-1 );
+
       if(is_separator(txt ) ) {
 
 	  guint e =0;
 
-	  /* do we have something in the before BEFORE the separator ?*/
+	  /* do we have something in the before BEFORE the separator ? */
 	  if(0 < tmp->str ) {
-	      handle_text(buf, j, i-1 );
+	      //handle_text(buf, j, i-1 );
 	      tmp =g_string_erase(tmp, 0, -1 );
 	  }
 
@@ -326,7 +374,6 @@ static void print_error_to_console(const char* err_msg ) {
 
     GtkTextBuffer* console_txt_buffer;
     GtkTextIter start, end;
-    GdkColor color;
     GtkTextMark* mark;
 
     console_txt_buffer =gtk_text_view_get_buffer(console_txt_view);
@@ -348,7 +395,6 @@ static void print_error_to_console(const char* err_msg ) {
 
     /* apply a tag */
     gtk_text_buffer_apply_tag_by_name(console_txt_buffer, "italic", &start, &end );
-    //gtk_text_buffer_apply_tag_by_name(console_txt_buffer, "martin", &start, &end );
     
     /* free the mark */
     /* !!! change thi to gtk_text_buffer_move_mark() later */
@@ -364,25 +410,12 @@ static void print_error_to_console(const char* err_msg ) {
     on_drawing_area_expose_event(gl_win, NULL );
 }
 
-/* typedef void (*ProgramStringARB_t)(GLenum target, GLenum format, GLuint len, const GLbyte *string ); */
-/* ProgramStringARB_t glProgramStringARB =NULL; */
-
-/* static void compile_execute_vpfp_dummy(char* test_arb_vp, char* test_arb_fp ) {} */
-/* static void (*init_shaders)(char*, char* ) =compile_execute_vpfp_dummy; */
-
 static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
 {
     GLint error_pos;
 
     GLuint vp;
     GLuint fp;
-
-/*   glProgramStringARB =NULL; */
-/*   g_print("glProgramStringARB: %u\n", glProgramStringARB ); */
-
-
-/*   glProgramStringARB =(ProgramStringARB_t)gdk_gl_get_proc_address("glProgramStringARB"); */
-/*   g_print("glProgramStringARB: %u\n", glProgramStringARB ); */
 
     if( (NULL==test_arb_vp) || (NULL==test_arb_fp) ) {
 	/* reject invalid vertex/fragment programs */
@@ -419,7 +452,7 @@ static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
     glEnable(GL_FRAGMENT_PROGRAM_ARB );
 
     //Generate a program.
-   /*  gdk_glext_vp-> */glGenProgramsARB(1, &fp );
+    /* gdk_glext_vp-> */glGenProgramsARB(1, &fp );
 
     //Bind the program.
     /* gdk_glext_vp-> */glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, fp );	
@@ -445,7 +478,7 @@ static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
 
 
 
-
+/* private util functions */
 
 static void gsc_refresh_visible_areas() {
 
@@ -594,6 +627,7 @@ void on_drawing_area_realize (GtkWidget* widget, gpointer   user_data )
   glLightfv (GL_LIGHT0, GL_AMBIENT, ambient);
   glLightfv (GL_LIGHT0, GL_DIFFUSE, diffuse);
   glLightfv (GL_LIGHT0, GL_POSITION, position);
+
   glLightModelfv (GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
   glLightModelfv (GL_LIGHT_MODEL_LOCAL_VIEWER, local_view);
 
@@ -660,29 +694,7 @@ on_drawing_area_configure_event (GtkWidget *widget, GdkEventConfigure *event, gp
 //gboolean on_drawing_area_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer user_data )
 void on_drawing_area_expose_event(GtkWidget *widget, gpointer user_data )
 {
-/*     GdkGLContext *glcontext =gtk_widget_get_gl_context (widget); */
-/*     GdkGLDrawable *gldrawable =gtk_widget_get_gl_drawable (widget); */
 
-/*     g_printf("%u: on_drawing_area_expose_event()\n", counter++ ); */
-
-/*     /*** OpenGL BEGIN ***/ 
-/*     if(!gdk_gl_drawable_gl_begin(gldrawable, glcontext) ) */
-/* 	return FALSE; */
-
-/*     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); */
-
-/*     glCallList(1); */
-    
-
-/*     if(gdk_gl_drawable_is_double_buffered(gldrawable ) ) */
-/* 	gdk_gl_drawable_swap_buffers(gldrawable ); */
-/*     else */
-/* 	glFlush(); */
-
-/*     gdk_gl_drawable_gl_end(gldrawable ); */
-/*     /*** OpenGL END ***/ 
-
-/*     return FALSE; */
     g_print("%u. on_drawing_area_expose_event\n", counter++ );  
 
   GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
@@ -717,7 +729,13 @@ void on_drawing_area_expose_event(GtkWidget *widget, gpointer user_data )
 /*   glCallList (shape_list_base + shape_current); */
 
   //glCallList(1);
+  glEnable( GL_BLEND );
+  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
   gdk_gl_draw_teapot(TRUE, 1.0);
+
+  glDisable( GL_BLEND );
+
 
   /* Swap buffers */
   if (gdk_gl_drawable_is_double_buffered (gldrawable))
@@ -846,6 +864,128 @@ gboolean motion_notify_event(GtkWidget* widget, GdkEventMotion* event, gpointer 
   return TRUE;
 }
 
+/* fp textview */
+gboolean on_fp_textview_delete_from_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_delete_from_cursor()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_fp_textview_insert_at_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_insert_at_cursor()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_fp_textview_move_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_move_cursor()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_fp_textview_move_focus(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_move_focus()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_fp_textview_move_viewport(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_move_viewport()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_fp_textview_select_all(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_select_all()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_fp_textview_toggle_overwrite(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_toggle_overwrite()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_fp_textview_key_press_event(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_key_press_event()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_fp_textview_key_release_event(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_key_release_event()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_fp_textview_state_changed(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_state_changed()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_fp_textview_selection_received(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_fp_textview_selection_received()\n", counter++ );
+    return FALSE;
+}
+
+/* vp textview */
+gboolean on_vp_textview_delete_from_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_vp_textview_delete_from_cursor()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_vp_textview_insert_at_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_vp_textview_insert_at_cursor()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_vp_textview_move_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_vp_textview_move_cursor()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_vp_textview_move_focus(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_vp_textview_move_focus()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_vp_textview_move_viewport(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_vp_textview_move_viewport()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_vp_textview_select_all(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_vp_textview_select_all()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_vp_textview_toggle_overwrite(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_vp_textview_toggle_overwrite()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_vp_textview_state_changed(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_vp_textview_state_changed()\n", counter++ );
+    return FALSE;
+}
+
+gboolean on_vp_textview_selection_received(GtkWidget* widget, GdkEventMotion* event, gpointer data )
+{
+    g_printf("%u: on_vp_textview_selection_received()\n", counter++ );
+    return FALSE;
+}
+
 void on_hpaned1_check_resize(GtkWidget* widget, gpointer data )
 {
     g_printf("%u: on_hpaned1_check_resize()\n", counter++ );
@@ -881,6 +1021,8 @@ void on_toolbutton_compile_execute_shader_clicked(GtkWidget* widget, gpointer da
 
   vpb =shaders->vp_buffer;
 
+  syntax_highlight_buffer(vpb);
+
   gtk_text_buffer_get_start_iter(vpb, &start );
 
   gtk_text_buffer_get_end_iter(vpb, &end );
@@ -893,13 +1035,13 @@ void on_toolbutton_compile_execute_shader_clicked(GtkWidget* widget, gpointer da
   g_printf("%u: Fragment Shader string:\n%s\n", counter++, fp_txt );
 
   compile_execute_vpfp(vp_txt, fp_txt);
-  
-  //g_printf("what the hell ???\n");
 
+  //g_signal_emit_by_name(gl_win, "expose_event" ); //emit signal - SEG FAULT !  
   on_drawing_area_expose_event(gl_win, NULL ); //call the signal handler directly
-  //g_signal_emit_by_name(gl_win, "expose_event" ); //emit signal
-  
+
 }
+
+
 
 void on_toolbutton_remove_shaders_clicked(GtkWidget* widget, gpointer data )
 {
@@ -915,15 +1057,9 @@ void on_toolbutton_remove_shaders_clicked(GtkWidget* widget, gpointer data )
     glDisable(GL_VERTEX_PROGRAM_ARB );
     glDisable(GL_FRAGMENT_PROGRAM_ARB );
     
-    //print_error_to_console(msg);
-
     console_txt_buffer =gtk_text_view_get_buffer(console_txt_view);
 
     gtk_text_buffer_get_end_iter(console_txt_buffer, &end );
-
-
-    //gdk_color_parse ("green", &color);
-    //gtk_widget_modify_text (console_txt_view, GTK_STATE_NORMAL, &color);
 
     gtk_text_buffer_insert(console_txt_buffer, &end, msg, strlen(msg) );
 
@@ -940,7 +1076,85 @@ void on_toolbutton_remove_shaders_clicked(GtkWidget* widget, gpointer data )
 
 }
 
+
+void test_vp_txt_view_handler(GtkTextView *textview, gchar *arg1, gpointer user_data )
+{
+    g_print("!!! test_vp_txt_view_handler()\n");
+}
+
+void test_vp_txt_view_handler_two(GtkTextView *textview, gpointer user_data )
+{
+    gchar* name =(gchar*)user_data;
+
+    if(NULL==name)
+	name="NULL";
+
+
+    g_print("!!! test_vp_txt_view_handler_two(): %s\n", name );
+}
+
+void 
+vp_txt_buffer_insert_text_handler(GtkTextBuffer* vp_txt_buffer,
+				  GtkTextIter *arg1,
+				  gchar *arg2,
+				  gint arg3,
+				  gpointer user_data ) {
+
+    GdkWindow* gdk_win;
+    GdkRegion* gdk_reg;
+
+    //g_print("vp_txt_buffer_insert_text_handler(), ", arg2 );
+
+    //syntax_highlight_buffer_dummy(vp_txt_buffer);
+
+    gdk_win =gtk_widget_get_root_window(vp_txt_view);
+    gdk_reg =gdk_window_get_update_area(gdk_win);
+
+    gdk_window_invalidate_region(gdk_win, gdk_reg, TRUE );
+    gdk_window_process_updates(gdk_win, TRUE );
+
+}
+
+void        
+vp_txt_buffer_delete_range_handler(GtkTextBuffer* vp_txt_buffer,
+				   GtkTextIter* start_iter,
+				   GtkTextIter* end_iter,
+				   gpointer user_data ) {
+
+    GdkWindow* gdk_win;
+    GdkRegion* gdk_reg;
+
+    gchar* del_txt =gtk_text_buffer_get_text(vp_txt_buffer, start_iter, end_iter, TRUE );
+
+    //g_print("vp_txt_buffer_delete_range_handler(), ", del_txt );
+    
+    //syntax_highlight_buffer_dummy(vp_txt_buffer);
+
+    gdk_win =gtk_widget_get_root_window(vp_txt_view);
+    gdk_reg =gdk_window_get_update_area(gdk_win);
+
+    gdk_window_invalidate_region(gdk_win, gdk_reg, TRUE );
+    gdk_window_process_updates(gdk_win, TRUE );
+
+}
+
 void vp_txt_buffer_changed_handler(GtkTextBuffer *textbuffer, gpointer user_dat )
 { 
-    syntax_highlight_buffer();
+    header_handler_flag =-1;
+    syntax_highlight_buffer(textbuffer);
+}
+
+void fp_txt_buffer_changed_handler(GtkTextBuffer *textbuffer, gpointer user_dat )
+{
+    header_handler_flag =-1;
+    syntax_highlight_buffer(textbuffer);
+}
+
+
+
+
+void vp_txt_buffer_modified_changed_handler(GtkTextBuffer *textbuffer, gpointer user_data ) 
+{
+    //g_print("vp_txt_buffer_modified_changed_handler(), " );
+    //syntax_highlight_buffer_dummy(textbuffer );
 }
