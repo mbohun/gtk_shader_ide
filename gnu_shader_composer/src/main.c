@@ -184,7 +184,9 @@ int main(int argc, char *argv[] )
   console_txt_view =glade_xml_get_widget(xml, "console_textview" );
   tag =gtk_text_buffer_create_tag(gtk_text_view_get_buffer(console_txt_view), 
 				  "martin", 
-				  "weight", 500, 
+				  //"weight", 500,
+				  "style", PANGO_STYLE_ITALIC,
+				  "color", "red",
 				  NULL );
 
 

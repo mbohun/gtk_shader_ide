@@ -37,18 +37,32 @@ static void print_error_to_console(const char* err_msg ) {
     GtkTextBuffer* console_txt_buffer;
     GtkTextIter start, end;
     GdkColor color;
-    
+    GtkTextMark* mark;
+
     console_txt_buffer =gtk_text_view_get_buffer(console_txt_view);
 
     /* start is the end, because we are going to append at the end */
     gtk_text_buffer_get_end_iter(console_txt_buffer, &start );
 
+    /* save a mark for later */
+    mark =gtk_text_buffer_create_mark(console_txt_buffer, NULL, &start, TRUE );
+
+    /* insert the error msg */
     gtk_text_buffer_insert(console_txt_buffer, &start, err_msg, strlen(err_msg ) );
 
+    /* use the mark to set the start iter */
+    gtk_text_buffer_get_iter_at_mark(console_txt_buffer, &start, mark );
+
+    /* set the end iter */
     gtk_text_buffer_get_end_iter(console_txt_buffer, &end );
 
-    //gtk_text_buffer_apply_tag(console_txt_buffer, tag, &start, &end );
-    gtk_text_buffer_apply_tag_by_name(console_txt_buffer, "martin", &start, &end );
+    /* apply a tag */
+    gtk_text_buffer_apply_tag(console_txt_buffer, tag, &start, &end );
+    //gtk_text_buffer_apply_tag_by_name(console_txt_buffer, "martin", &start, &end );
+    
+    /* free the mark */
+    /* !!! change thi to gtk_text_buffer_move_mark() later */
+    gtk_text_buffer_delete_mark(console_txt_buffer, mark );
 
     gtk_text_view_scroll_to_iter(console_txt_view,
 				 &end,
@@ -57,7 +71,6 @@ static void print_error_to_console(const char* err_msg ) {
 				 0.0,
 				 0.0 );
 
-    //g_signal_emit_by_name(gl_win, "expose_event" ); //emit signal - SEG FAULT !
     on_drawing_area_expose_event(gl_win, NULL );
 }
 
@@ -745,8 +758,6 @@ void on_toolbutton_compile_execute_shader_clicked(GtkWidget* widget, gpointer da
   
 }
 
-
-
 void on_toolbutton_remove_shaders_clicked(GtkWidget* widget, gpointer data )
 {
     GtkTextBuffer* console_txt_buffer;
@@ -761,27 +772,27 @@ void on_toolbutton_remove_shaders_clicked(GtkWidget* widget, gpointer data )
     glDisable(GL_VERTEX_PROGRAM_ARB );
     glDisable(GL_FRAGMENT_PROGRAM_ARB );
     
-    print_error_to_console(msg);
+    //print_error_to_console(msg);
 
-/*     console_txt_buffer =gtk_text_view_get_buffer(console_txt_view); */
+    console_txt_buffer =gtk_text_view_get_buffer(console_txt_view);
 
-/*     gtk_text_buffer_get_end_iter(console_txt_buffer, &end ); */
+    gtk_text_buffer_get_end_iter(console_txt_buffer, &end );
 
 
-/*     gdk_color_parse ("green", &color); */
-/*     gtk_widget_modify_text (console_txt_view, GTK_STATE_NORMAL, &color); */
+    //gdk_color_parse ("green", &color);
+    //gtk_widget_modify_text (console_txt_view, GTK_STATE_NORMAL, &color);
 
-/*     gtk_text_buffer_insert(console_txt_buffer, &end, msg, strlen(msg) ); */
+    gtk_text_buffer_insert(console_txt_buffer, &end, msg, strlen(msg) );
 
-/*     gtk_text_buffer_get_end_iter(console_txt_buffer, &end ); */
-/*     gtk_text_view_scroll_to_iter(console_txt_view, */
-/* 				 &end, */
-/* 				 0.0, */
-/* 				 FALSE, */
-/* 				 0.0, */
-/* 				 0.0 ); */
+    gtk_text_buffer_get_end_iter(console_txt_buffer, &end );
+    gtk_text_view_scroll_to_iter(console_txt_view,
+				 &end,
+				 0.0,
+				 FALSE,
+				 0.0,
+				 0.0 );
 
-/*     //g_signal_emit_by_name(gl_win, "expose_event" ); //emit signal - SEG FAULT ! */
-/*     on_drawing_area_expose_event(gl_win, NULL ); */
+    //g_signal_emit_by_name(gl_win, "expose_event" ); //emit signal - SEG FAULT !
+    on_drawing_area_expose_event(gl_win, NULL );
 
 }
