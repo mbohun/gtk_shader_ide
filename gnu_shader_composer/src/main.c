@@ -21,13 +21,18 @@ char *package_prefix;
 char *package_datadir;
 #endif
 
+
+/* globals for now */
+GtkWidget* main_window;
+GtkWidget* gsc_quit_dialog;
+
 int
 main(int argc, char *argv[] )
 {
 
   GladeXML* xml;
   GdkGLConfig* glconfig;
-  GtkWidget* main_window;
+
   GtkWidget* drawing_area;
 
   gboolean dummy;
@@ -88,6 +93,12 @@ main(int argc, char *argv[] )
  
   main_window = glade_xml_get_widget(xml, "main_window" );
 
+  //pre-create the dialogs
+  gsc_quit_dialog =glade_xml_get_widget(xml, "exit_confirmation_dialog" );
+  //gtk_widget_set_parent(gsc_quit_dialog, main_window );
+/*   gtk_widget_set_parent_window(gsc_quit_dialog, //widget  */
+/* 			       main_window );   //parent */
+
   gtk_container_set_reallocate_redraws (GTK_CONTAINER (main_window), TRUE );
 
   printf("drawing_area: %u\n", drawing_area );
@@ -104,7 +115,7 @@ main(int argc, char *argv[] )
   printf("dummy: %s\n", dummy?"TRUE":"FALSE" );
 
 
-  gtk_widget_show (main_window);
+  gtk_widget_show(main_window);
 
 /*   g_signal_connect ((gpointer) main_window, "destroy", G_CALLBACK(gtk_main_quit), */
 /*                     NULL); */
