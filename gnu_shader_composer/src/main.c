@@ -89,21 +89,9 @@ main(int argc, char *argv[] )
 
 
   xml =glade_xml_new ("gnu_shader_composer.glade", NULL, NULL );
-  //xml =glade_xml_new ("simple_gl_test.glade", NULL, NULL );
-  //xml =glade_xml_new ("simple_simple.glade", NULL, NULL );
 
   //autoconnect does NOT work with data !
   //glade_xml_signal_autoconnect(xml );
-
-  //char* name ="Martin Hoermann";
-  guint val =666;
-  guint* pval =&val;
-  
-  
-
-//  g_printf("ADDR: %u, NAME: %s\n", &name, name );
-
-  g_print("ADDR: %u, VAL: %u\n", pval, val );
 
   glade_xml_signal_connect(xml, 
 			   "on_drawing_area_realize", 
@@ -171,11 +159,6 @@ main(int argc, char *argv[] )
 				"on_toolbutton_compile_execute_shader_clicked", 
 				G_CALLBACK(on_toolbutton_compile_execute_shader_clicked ),
 				&shader_buffers );  
-
-
-/*   glade_xml_signal_connect_data(xml, */
-/*       ); */
-
  
   main_window = glade_xml_get_widget(xml, "main_window" );
 
@@ -211,8 +194,13 @@ main(int argc, char *argv[] )
 
   gtk_widget_show(main_window);
 
-/*   g_signal_connect ((gpointer) main_window, "destroy", G_CALLBACK(gtk_main_quit), */
-/*                     NULL); */
+  /*
+  g_signal_connect( (gpointer)main_window, 
+		    "destroy",
+		    G_CALLBACK(gtk_main_quit),
+                     NULL);
+
+  */
 
   gtk_main ();
 
