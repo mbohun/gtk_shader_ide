@@ -160,6 +160,15 @@ main(int argc, char *argv[] )
 			   "on_hpaned1_move_handle", 
 			   G_CALLBACK(on_hpaned1_move_handle ) );
 
+  /* main menu, file menu, quit item */
+  glade_xml_signal_connect(xml, 
+			   "on_main_menu_item_file_quit", 
+			   G_CALLBACK(on_main_menu_item_file_quit ) );
+
+  
+  
+
+
 /*   glade_xml_signal_connect_data(xml, */
 /*       ); */
 

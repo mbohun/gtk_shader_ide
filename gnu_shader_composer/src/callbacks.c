@@ -93,13 +93,10 @@ on_save_as1_activate                   (GtkMenuItem     *menuitem,
 }
 
 
-void
-on_quit1_activate                      (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
+void on_main_menu_item_file_quit(GtkMenuItem* menuitem, gpointer user_data )
 {
-
+  gtk_widget_show(gsc_quit_dialog );
 }
-
 
 void
 on_cut1_activate                       (GtkMenuItem     *menuitem,
@@ -121,7 +118,7 @@ void
 on_paste1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    gtk_widget_show(gsc_quit_dialog );
+ 
 }
 
 
@@ -592,3 +589,4 @@ void on_hpaned1_move_handle(GtkWidget* widget, gpointer data )
 {
     g_printf("%u: on_hpaned1_move_handle()\n", counter++ );
 }
+
