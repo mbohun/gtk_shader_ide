@@ -30,8 +30,142 @@ extern GtkWidget* console_txt_view;
 extern GtkTextView* vp_txt_view;
 extern GtkTextView* fp_txt_view;
 
+#ifndef GL_FRAGMENT_PROGRAM_ARB /* crappy condition */
+extern GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
+static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
+{
+    GLint error_pos;
 
-/* extern GdkGL_GL_ARB_vertex_program* gdk_glext_vp; */
+    GLuint vp;
+    GLuint fp;
+
+    if( (NULL==test_arb_vp) || (NULL==test_arb_fp) ) {
+	/* reject invalid vertex/fragment programs */
+	return;
+    }
+
+    //Enable ARB vertex program.
+    glEnable(GL_VERTEX_PROGRAM_ARB );
+
+    //Generate a program.
+    gdk_glext_vp->glGenProgramsARB(1, &vp );
+
+    //Bind the program.
+    gdk_glext_vp->glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp );	
+
+    //Load the program.
+    gdk_glext_vp->glProgramStringARB(GL_VERTEX_PROGRAM_ARB, 
+				     GL_PROGRAM_FORMAT_ASCII_ARB, 
+				     strlen((const char*)test_arb_vp ), 
+				     test_arb_vp );
+
+
+    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &error_pos );
+    //g_print("GL_PROGRAM_ERROR_POSITION_ARB: %d\n", error_pos );
+
+    if( -1 != error_pos ) {
+	//g_print("Vertex Program ERROR: %s\n", glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	print_error_to_console(glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	glDisable(GL_VERTEX_PROGRAM_ARB );
+	return;
+    }
+
+    //Enable ARB vertex program.
+    glEnable(GL_FRAGMENT_PROGRAM_ARB );
+
+    //Generate a program.
+    gdk_glext_vp->glGenProgramsARB(1, &fp );
+
+    //Bind the program.
+    gdk_glext_vp->glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, fp );	
+
+    //Load the program.
+    gdk_glext_vp->glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, 
+				     GL_PROGRAM_FORMAT_ASCII_ARB, 
+				     strlen((const char*)test_arb_fp ), 
+				     test_arb_fp );
+
+    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &error_pos );
+    //g_print("GL_PROGRAM_ERROR_POSITION_ARB: %d\n", error_pos );
+
+    if( -1 != error_pos ) {
+	//g_print("Fragment Program - ERROR: %s\n", glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	print_error_to_console(glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	glDisable(GL_VERTEX_PROGRAM_ARB );
+	glDisable(GL_FRAGMENT_PROGRAM_ARB );
+	return;
+    }
+
+}
+#else
+
+static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
+{
+    GLint error_pos;
+
+    GLuint vp;
+    GLuint fp;
+
+    if( (NULL==test_arb_vp) || (NULL==test_arb_fp) ) {
+	/* reject invalid vertex/fragment programs */
+	return;
+    }
+
+    //Enable ARB vertex program.
+    glEnable(GL_VERTEX_PROGRAM_ARB );
+
+    //Generate a program.
+    glGenProgramsARB(1, &vp );
+
+    //Bind the program.
+    glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp );	
+
+    //Load the program.
+    glProgramStringARB(GL_VERTEX_PROGRAM_ARB, 
+				     GL_PROGRAM_FORMAT_ASCII_ARB, 
+				     strlen((const char*)test_arb_vp ), 
+				     test_arb_vp );
+
+
+    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &error_pos );
+    //g_print("GL_PROGRAM_ERROR_POSITION_ARB: %d\n", error_pos );
+
+    if( -1 != error_pos ) {
+	//g_print("Vertex Program ERROR: %s\n", glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	print_error_to_console(glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	glDisable(GL_VERTEX_PROGRAM_ARB );
+	return;
+    }
+
+    //Enable ARB vertex program.
+    glEnable(GL_FRAGMENT_PROGRAM_ARB );
+
+    //Generate a program.
+    glGenProgramsARB(1, &fp );
+
+    //Bind the program.
+    glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, fp );	
+
+    //Load the program.
+    glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, 
+				     GL_PROGRAM_FORMAT_ASCII_ARB, 
+				     strlen((const char*)test_arb_fp ), 
+				     test_arb_fp );
+
+    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &error_pos );
+    //g_print("GL_PROGRAM_ERROR_POSITION_ARB: %d\n", error_pos );
+
+    if( -1 != error_pos ) {
+	//g_print("Fragment Program - ERROR: %s\n", glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	print_error_to_console(glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	glDisable(GL_VERTEX_PROGRAM_ARB );
+	glDisable(GL_FRAGMENT_PROGRAM_ARB );
+	return;
+    }
+
+}
+#endif
+
 
 //debug msg counter
 static unsigned int counter =0;
@@ -410,71 +544,6 @@ static void print_error_to_console(const char* err_msg ) {
     on_drawing_area_expose_event(gl_win, NULL );
 }
 
-static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
-{
-    GLint error_pos;
-
-    GLuint vp;
-    GLuint fp;
-
-    if( (NULL==test_arb_vp) || (NULL==test_arb_fp) ) {
-	/* reject invalid vertex/fragment programs */
-	return;
-    }
-
-    //Enable ARB vertex program.
-    glEnable(GL_VERTEX_PROGRAM_ARB );
-
-    //Generate a program.
-    /* gdk_glext_vp-> */glGenProgramsARB(1, &vp );
-
-    //Bind the program.
-    /* gdk_glext_vp-> */glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp );	
-
-    //Load the program.
-    /* gdk_glext_vp-> */glProgramStringARB(GL_VERTEX_PROGRAM_ARB, 
-				     GL_PROGRAM_FORMAT_ASCII_ARB, 
-				     strlen((const char*)test_arb_vp ), 
-				     test_arb_vp );
-
-
-    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &error_pos );
-    //g_print("GL_PROGRAM_ERROR_POSITION_ARB: %d\n", error_pos );
-
-    if( -1 != error_pos ) {
-	//g_print("Vertex Program ERROR: %s\n", glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
-	print_error_to_console(glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
-	glDisable(GL_VERTEX_PROGRAM_ARB );
-	return;
-    }
-
-    //Enable ARB vertex program.
-    glEnable(GL_FRAGMENT_PROGRAM_ARB );
-
-    //Generate a program.
-    /* gdk_glext_vp-> */glGenProgramsARB(1, &fp );
-
-    //Bind the program.
-    /* gdk_glext_vp-> */glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, fp );	
-
-    //Load the program.
-    /* gdk_glext_vp-> */glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, 
-				     GL_PROGRAM_FORMAT_ASCII_ARB, 
-				     strlen((const char*)test_arb_fp ), 
-				     test_arb_fp );
-
-    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &error_pos );
-    //g_print("GL_PROGRAM_ERROR_POSITION_ARB: %d\n", error_pos );
-
-    if( -1 != error_pos ) {
-	//g_print("Fragment Program - ERROR: %s\n", glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
-	print_error_to_console(glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
-	glDisable(GL_VERTEX_PROGRAM_ARB );
-	glDisable(GL_FRAGMENT_PROGRAM_ARB );
-	return;
-    }
-
-}
 
 
 
