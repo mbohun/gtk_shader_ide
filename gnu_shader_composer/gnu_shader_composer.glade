@@ -4,7 +4,10 @@
 <glade-interface>
 
 <widget class="GtkWindow" id="main_window">
-  <property name="visible">True</property>
+
+  <!-- the generated "visible" property set to True does NOT work with libglade/gtglext -->
+  <!-- <property name="visible">True</property> -->
+
   <property name="title" translatable="yes">GNU Shader Composer</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
