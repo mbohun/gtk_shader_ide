@@ -9,6 +9,7 @@
 
 #include <gtk/gtk.h>
 #include <gtk/gtkgl.h>
+//#include <gdk/gdkglglext.h>
 #include <glade/glade.h>
 
 #include <GL/gl.h>
@@ -27,6 +28,20 @@ char *package_datadir;
 /* globals for now */
 GtkWidget* main_window;
 GtkWidget* gsc_quit_dialog;
+
+/* GdkGL_GL_ARB_vertex_program* gdk_glext_vp; */
+
+/* static void init_gl_ext(void) */
+/* { */
+/*   gdk_glext_vp =gdk_gl_get_GL_ARB_vertex_program(); */
+/*   if(NULL == gdk_glext_vp ) { */
+/*     g_print("ERROR: Failed to init GL_ARB_vertex_program ext !/n"); */
+/*     exit(-1); */
+/*   } */
+  
+/*   g_print("DEBUG: GL_ARB_vertex_program ext init success.../n"); */
+/* } */
+
 
 int
 main(int argc, char *argv[] )
@@ -193,6 +208,9 @@ main(int argc, char *argv[] )
 				&shader_buffers );
 
   gtk_widget_show(main_window);
+
+  /* the GL extension must be loaded AFTER the gl widget was shown */
+  //init_gl_ext();
 
   /*
   g_signal_connect( (gpointer)main_window, 

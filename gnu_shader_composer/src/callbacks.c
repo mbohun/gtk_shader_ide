@@ -21,6 +21,57 @@
 
 extern GtkWidget* main_window;
 extern GtkWidget* gsc_quit_dialog;
+GtkWidget* gl_win;
+
+static void init_arb_vpfp_dummy(char* test_arb_vp, char* test_arb_fp ) {}
+static void (*init_shaders)(char*, char* ) =init_arb_vpfp_dummy;
+
+static void init_arb_vpfp(char* test_arb_vp, char* test_arb_fp )
+{
+  GLuint vp;
+  GLuint fp;
+
+  if( (NULL==test_arb_vp) || (NULL==test_arb_fp) ) {
+    /* reject invalid vertex/fragment programs */
+    return;
+  }
+
+  //Enable ARB vertex program.
+  glEnable(GL_VERTEX_PROGRAM_ARB );
+
+  //Generate a program.
+  glGenProgramsARB(1, &vp );
+
+  //Bind the program.
+  glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp );	
+
+  //Load the program.
+  glProgramStringARB(GL_VERTEX_PROGRAM_ARB, 
+		     GL_PROGRAM_FORMAT_ASCII_ARB, 
+		     strlen((const char*)test_arb_vp ), 
+		     test_arb_vp );
+  
+  //Enable ARB vertex program.
+  glEnable(GL_FRAGMENT_PROGRAM_ARB );
+
+  //Generate a program.
+  glGenProgramsARB(1, &fp );
+
+  //Bind the program.
+  glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, fp );	
+
+  //Load the program.
+  glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, 
+		     GL_PROGRAM_FORMAT_ASCII_ARB, 
+		     strlen((const char*)test_arb_fp ), 
+		     test_arb_fp );
+
+  //:-) we set the new shaders so reset the init to dummy
+  //init_shaders =init_arb_vpfp_dummy;
+
+}
+
+
 
 
 /* private util functions */
@@ -153,7 +204,7 @@ void on_main_window_delete_event (GtkMenuItem* menuitem, gpointer user_data )
 void on_drawing_area_realize (GtkWidget* widget, gpointer   user_data )
 {
 
-    g_print("%u. on_drawing_area_realize()\n", counter++ );  
+  g_print("%u. on_drawing_area_realize()\n", counter++ );  
 
   GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
   GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
@@ -274,6 +325,10 @@ void on_drawing_area_expose_event(GtkWidget *widget, gpointer user_data )
   /*** OpenGL BEGIN ***/
   if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
       return;// FALSE;
+
+  gl_win =widget;
+
+  //init_shaders();
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -596,20 +651,24 @@ void on_hpaned1_move_handle(GtkWidget* widget, gpointer data )
 void on_toolbutton_compile_execute_shader_clicked(GtkWidget* widget, gpointer data )
 {
   GtkTextIter start, end;
-  gchar* txt;
-  
+  gchar* vp_txt;
+  gchar* fp_txt;  
+
   g_printf("%u: on_toolbutton_compile_execute_shader_clicked()\n", counter++ );  
 
   struct shader_txt_buffers_t* shaders =(struct shader_txt_buffers_t*)data;
 
   gtk_text_buffer_get_start_iter(shaders->vp_buffer, &start );
   gtk_text_buffer_get_end_iter(shaders->vp_buffer, &end );
-  txt =gtk_text_buffer_get_text(shaders->vp_buffer, &start, &end, FALSE );
-  g_printf("%u: Vertex Shader string:\n%s\n", counter++, txt );
+  vp_txt =gtk_text_buffer_get_text(shaders->vp_buffer, &start, &end, FALSE );
+  g_printf("%u: Vertex Shader string:\n%s\n", counter++, vp_txt );
 
   gtk_text_buffer_get_start_iter(shaders->fp_buffer, &start );
   gtk_text_buffer_get_end_iter(shaders->fp_buffer, &end );
-  txt =gtk_text_buffer_get_text(shaders->fp_buffer, &start, &end, FALSE );    
-  g_printf("%u: Fragment Shader string:\n%s\n", counter++, txt );
+  fp_txt =gtk_text_buffer_get_text(shaders->fp_buffer, &start, &end, FALSE );    
+  g_printf("%u: Fragment Shader string:\n%s\n", counter++, fp_txt );
+
+  init_arb_vpfp(vp_txt, fp_txt);
   
+  on_drawing_area_expose_event(gl_win, NULL );
 }
