@@ -1,0 +1,299 @@
+<!-- 
+This is only a concept/prototype, at this stage this def/conf file will be used only for syntax color highlighting of glsl keywords.
+Later the structure might be changed to contain more info that could be used for syntax validation, help, hints, etc. 
+-->
+
+<syntaxhighlight>
+
+  <lang name="glsl">
+
+    <keywords>
+
+      <functions>
+
+	<!-- entry point -->
+	<function name="main"/>
+
+	<!-- Angle and Trigonometry Functions -->
+	<function name="radians"/>
+	<function name="degrees"/>
+	<function name="sin"/>
+	<function name="cos"/>
+	<function name="tan"/>
+	<function name="asin"/>
+	<function name="acos"/>
+	<function name="atan"/>
+
+	<!-- Exponential Functions -->
+	<function name="pow"/>
+	<function name="exp2"/>
+	<function name="log2"/>
+	<function name="sqrt"/>
+	<function name="inversesqrt"/>
+
+	<!-- Common Functions -->
+	<function name="abs"/>
+	<function name="sign"/>
+	<function name="floor"/>
+	<function name="ceil"/>
+	<function name="fract"/>
+	<function name="mod"/>
+	<function name="min"/>
+	<function name="max"/>
+	<function name="clamp"/>
+	<function name="mix"/>
+	<function name="step"/>
+	<function name="smoothstep"/>
+
+	<!-- Geometric Functions -->
+	<function name="length"/>
+	<function name="distance"/>
+	<function name="dot"/>
+	<function name="cross"/>
+	<function name="normalize"/>
+	<function name="ftransform"/>
+	<function name="faceforward"/>
+	<function name="reflect"/>
+
+	<!-- Matrix Functions -->
+	<function name="matrixcompmult"/>
+
+	<!-- Vector Relational Functions -->
+	<function name="lessThan"/>
+	<function name="lessThanEqual"/>
+	<function name="greaterThan"/>
+	<function name="greaterThanEqual"/>
+	<function name="equal"/>
+	<function name="notEqual"/>
+	<function name="any"/>
+	<function name="all"/>
+	<function name="not"/>
+
+	<!-- Texture Access Functions -->
+	<function name="texture1D"/>
+	<function name="texture1DProj"/>
+	<function name="texture1DLod"/>
+	<function name="texture1DProjLod"/>
+	<function name="texture2D"/>
+	<function name="texture2DProj"/>
+	<function name="texture2DLod"/>
+	<function name="texture2DProjLod"/>
+	<function name="texture3D"/>
+	<function name="texture3DProj"/>
+	<function name="texture3DLod"/>
+	<function name="texture3DProjLod"/>
+	<function name="textureCube"/>
+	<function name="textureCubeLod"/>
+	<function name="shadow1D"/>
+	<function name="shadow2D"/>
+	<function name="shadow1DProj"/>
+	<function name="shadow2DProj"/>
+	<function name="shadow1DLod"/>
+	<function name="shadow2DLod"/>
+	<function name="shadow1DProjLod"/>
+	<function name="shadow2DProjLod"/>
+
+	<!-- Fragment Processing Functions -->
+	<function name="dFdx"/>
+	<function name="dFdy"/>
+	<function name="fwidth"/>
+
+	<!-- Noise Functions -->
+	<function name="noise1"/>
+	<function name="noise2"/>
+	<function name="noise3"/>
+	<function name="noise4"/>
+
+      </functions>
+
+      <expressions>
+	<expression name="do"/>
+	<expression name="break"/>
+	<expression name="continue"/>
+	<expression name="if"/>
+	<expression name="else"/>
+	<expression name="while"/>
+	<expression name="discard" />
+	<expression name="return" />
+      </expressions>
+
+      <operators>
+	<operator name="=="/>
+	<operator name="!="/>
+      </operators>
+
+      <datatypes>
+
+	<datatype name="bool"/>
+	<datatype name="float"/>
+	<datatype name="int"/>
+
+	<datatype name="vec2"/>
+	<datatype name="vec3"/>
+	<datatype name="vec4"/>
+
+	<datatype name="ivec2"/>
+	<datatype name="ivec3"/>
+	<datatype name="ivec4"/>
+
+	<datatype name="bvec2"/>
+	<datatype name="bvec3"/>
+	<datatype name="bvec4"/>
+
+	<datatype name="mat2"/>
+	<datatype name="mat3"/>
+	<datatype name="mat4"/>
+
+	<datatype name="sampler1D"/>
+	<datatype name="sampler2D"/>
+	<datatype name="sampler3D"/>
+	<datatype name="samplerCube"/>
+	<datatype name="sampler1DShadow"/>
+	<datatype name="sampler2DShadow"/>
+
+	<datatype name="struct"/>
+
+      </datatypes>
+
+      <qualifiers>
+	<qualifier name="attribute"/>
+	<qualifier name="const"/>
+	<qualifier name="in"/>
+	<qualifier name="inout"/>
+	<qualifier name="out"/>
+	<qualifier name="uniform"/>
+	<qualifier name="varying"/>
+	<qualifier name="void"/>
+      </qualifiers>
+
+      <preprocessor>
+	
+      </preprocessor>
+
+      
+      <attributes>
+	<attrib name="gl_Color"/>
+	<attrib name="gl_SecondaryColor"/>
+	<attrib name="gl_Normal"/>
+	<attrib name="gl_Vertex"/>
+	<attrib name="gl_MultiTexCoord0"/>
+	<attrib name="gl_MultiTexCoord1"/>
+	<attrib name="gl_MultiTexCoord2"/>
+
+	<attrib name="gl_Position"/>
+	<attrib name="gl_PointSize"/>
+	<attrib name="gl_ClipVertex"/>
+
+	<attrib name="gl_FrontColor"/>
+	<attrib name="gl_BackColor"/>
+	<attrib name="gl_FrontSecondaryColor"/>
+	<attrib name="gl_BackSecondaryColor"/>
+	<attrib name="gl_TextCoord"/>
+	<attrib name="gl_FogFragCoord"/>
+
+	<attrib name="gl_FragCoord"/>
+	<attrib name="gl_FrontFacing"/>
+
+	<attrib name="gl_FragColor"/>
+	<attrib name="gl_FragDepth"/>
+	
+      </attributes>
+
+
+      <!-- Built-in uniform variables -->
+      <uniforms>
+	
+	<!-- Matrix state -->
+	<uniform name="gl_ModelViewMatrix"/>
+	<uniform name="gl_ProjectionMatrix"/>
+	<uniform name="gl_ModelViewProjectionMatrix"/>
+	<uniform name="gl_NormalMatrix"/>
+	<uniform name="gl_TextureMatrix"/>
+
+	<!-- Normal scaling -->
+	<uniform name="gl_NormalScale"/>
+
+	<!-- Depth range in window coordinates -->
+	<uniform name="gl_DepthRangeParameters"/>
+	<uniform name="gl_DepthRange"/>
+
+	<!-- Clip planes -->
+	<uniform name="gl_ClipPlane"/>
+
+	<!-- Point size -->
+	<uniform name="gl_PointParameters"/>
+	<uniform name="gl_Point"/>
+
+	<!-- Material state -->
+	<uniform name="gl_MaterialParameters"/>
+	<uniform name="gl_FrontMaterial"/>
+	<uniform name="gl_BackMaterial"/>
+
+	<!-- Light state -->
+	<uniform name="gl_LightSourceParameters"/>
+	<uniform name="gl_LightSource"/>
+	<uniform name="gl_LightModelParameters"/>
+	<uniform name="gl_LightModel"/>
+
+	<!-- Derived state from products of light and material -->
+	<uniform name="gl_LightModelProducts"/>
+	<uniform name="gl_FrontLightModelProduct"/>
+	<uniform name="gl_BackLightModelProduct"/>
+	<uniform name="gl_LightProducts"/>
+	<uniform name="gl_FrontLightProduct"/>
+	<uniform name="gl_BackLightProduct"/>
+
+	<!-- Texture Environment and Generation -->
+	<uniform name="gl_TextureEnvColor"/>
+	<uniform name="gl_EyePlaneS"/>
+	<uniform name="gl_EyePlaneT"/>
+	<uniform name="gl_EyePlaneR"/>
+	<uniform name="gl_EyePlaneQ"/>
+	<uniform name="gl_ObjectPlaneS"/>
+	<uniform name="gl_ObjectPlaneT"/>
+	<uniform name="gl_ObjectPlaneR"/>
+	<uniform name="gl_ObjectPlaneQ"/>
+
+	<!-- Fog -->
+	<uniform name="gl_FogParameters"/>
+	<uniform name="gl_Fog"/>
+
+      </uniforms>
+
+      <constants>
+	<constant name="gl_MaxLights"/>
+	<constant name="gl_MaxClipPlanes"/>
+	<constant name="gl_MaxTextureUnits"/>
+	<constant name="gl_MaxTextureCoords"/>
+	<constant name="gl_MaxVertexAttribs"/>
+	<constant name="gl_MaxVertexUniformComponents"/>
+	<constant name="gl_MaxVaryingFloats"/>
+	<constant name="gl_MaxVertexTextureImageUnits"/>
+	<constant name="gl_MaxTextureImageUnits"/>
+	<constant name="gl_MaxFragmentUniformComponents"/>
+	<constant name="gl_MaxCombinedTextureImageUnits"/>
+      </constants>
+
+    </keywords>
+
+    <!-- at this stage the different groups of keywords differ only in colors -->
+    <colordef functions="0x000000" 
+	      datatypes="0x006600" 
+	      expressions="666600" 
+	      comments="0x000088"
+	      modifieres="0x006600"/>
+    
+  </lang>
+
+  <lang name="!!ARBvp1.0">
+    <keywords>
+    </keywords>
+  </lang>
+
+  <lang name="!!ARBfp1.0">
+    <keywords>
+    </keywords>
+  </lang>
+
+
+</syntaxhighlight>

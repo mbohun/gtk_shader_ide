@@ -42,10 +42,12 @@ static float view_scale = 1.0;
 
 static gboolean animate = FALSE;
 
-static void toggle_animation (GtkWidget *widget) {}
+static void toggle_animation(GtkWidget *widget) 
+{
 
-static void
-init_view (void)
+}
+
+static void init_view (void)
 {
   view_quat[0] = view_quat_diff[0] = 0.0;
   view_quat[1] = view_quat_diff[1] = 0.0;
@@ -53,6 +55,7 @@ init_view (void)
   view_quat[3] = view_quat_diff[3] = 1.0;
   view_scale = 1.0;
 }
+
 static float begin_x = 0.0;
 static float begin_y = 0.0;
 
