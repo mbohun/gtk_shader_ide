@@ -206,25 +206,31 @@ int main(int argc, char *argv[] )
 
 
   /* test tag 'keyword' for syntax highlight */
-  gtk_text_buffer_create_tag(gtk_text_view_get_buffer(console_txt_view), 
-			     "keyword",
+  gtk_text_buffer_create_tag(shader_buffers.vp_buffer, 
+			     "keyword-vp-header",
 			     "weight", 5000,
-			     "foreground", "blue",
-			     NULL );
-
-  gtk_text_buffer_create_tag(shader_buffers.vp_buffer,
-			     "normal",
-			     "weight", 50,
-			     "foreground", "black",
-			     //"background", "green",
+			     "foreground", "red",
 			     NULL );
 
   gtk_text_buffer_create_tag(shader_buffers.vp_buffer, 
-			     "keyword",
+			     "keyword-vp-defs",
+			     "weight", 5000,
+			     "foreground", "purple",
+			     NULL );
+
+
+  gtk_text_buffer_create_tag(shader_buffers.vp_buffer, 
+			     "keyword-vp-instructions",
 			     "weight", 5000,
 			     "foreground", "blue",
-			     "background", "white",
 			     NULL );
+
+  gtk_text_buffer_create_tag(shader_buffers.vp_buffer, 
+			     "keyword-vp-builtins",
+			     "weight", 5000,
+			     "foreground", "black",
+			     NULL );
+
 
   gtk_text_buffer_create_tag(shader_buffers.vp_buffer, 
 			     "comment",

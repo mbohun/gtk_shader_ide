@@ -39,25 +39,50 @@ static GtkWidget* gl_win;
 //extern GtkTextTag *tag;
 
 /* this is only a test, the real stuff will read this type of info from an external XML file */
-static gchar* KEYWORDS_ARB_VP10[] =
+/* KEYWORDS_ARB_VP10_HEADER is not used yet, i have to come with something a bit more elegant */
+static gchar* KEYWORDS_ARB_VP10_HEADER[] = 
 {
-    "!!ARBvp1.0", /* just for now */
-    "ABS", "ADD", "ADDRESS", "ALIAS", "ARL", "ATTRIB", 
+    "!!ARBvp1.0", 
+    NULL 
+};
+
+static gchar* KEYWORDS_ARB_VP10_DEFS[] =
+{
+  "ADDRESS", "ALIAS", "ATTRIB",
+  "OPTION", "OUTPUT", 
+  "PARAM",
+  "TEMP",
+  NULL
+};
+
+static gchar* KEYWORDS_ARB_VP10_INSTRUCTIONS[] =
+{
+
+    "ABS", "ADD", "ARL",
     "DP3", "DP4", "DPH", "DST",
-    "END", "EX2", "EXP", 
+    "EX2", "EXP", 
     "FLR", "FRC", 
     "LG2", "LIT", "LOG", 
     "MAD", "MAX", "MIN", "MOV", "MUL", 
-    "OPTION", "OUTPUT",
-    "PARAM", "POW", 
+    "POW", 
     "RCP", "RSQ", 
     "SGE", "SLT", "SUB", "SWZ", 
-    "TEMP", 
-    "XPD", 
+    "XPD",
+    NULL
+};
+
+static gchar* KEYWORDS_ARB_VP10_BUILTINS[] =
+{
     "program", 
     "result",
     "state", 
     "vertex",
+    NULL
+};
+
+static gchar* KEYWORDS_ARB_VP10_SEPARATORS[] =
+{
+    "#", " ", "\t", ".", ",", ";", "\r", "\n", //"", 
     NULL
 };
 
@@ -85,64 +110,7 @@ static gchar* KEYWORDS_ARB_FP10[] =
     NULL
 };
 
-static guint handle_comment_separator(GtkTextBuffer* buf, gint j ) 
-{
-  GtkTextIter start;
-  GtkTextIter end;
-  gchar* str;
 
-  guint old_end_iter_offset =0;
-
-  gtk_text_buffer_get_iter_at_offset(buf, &start, j );
-  gtk_text_buffer_get_iter_at_offset(buf, &end, j+1 );
-  
-  str =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
-  
-  old_end_iter_offset =gtk_text_iter_get_offset(&end );
-
-  if((0 == g_ascii_strncasecmp(str, "#", 1 ) ) ) {
-    gtk_text_iter_forward_to_line_end(&end);
-
-    old_end_iter_offset = gtk_text_iter_get_offset(&end ) - old_end_iter_offset;
-
-    gtk_text_buffer_apply_tag_by_name(buf, "comment", &start, &end );
-
-    return old_end_iter_offset+1;
-  }
-
-  return 0;
-
-}
-
-static void handle_keyword(GtkTextBuffer* buf, gint s, gint e ) 
-{
-    GtkTextIter start;
-    GtkTextIter end;
-    gchar* str;
-    guint i =0;
-
-    gtk_text_buffer_get_iter_at_offset(buf, &start, s );
-    gtk_text_buffer_get_iter_at_offset(buf, &end, e );
-
-    /* first remove any possible old keyword tags */
-    gtk_text_buffer_remove_tag_by_name(buf, "keyword", &start, &end );
-
-    str =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
-
-    while(KEYWORDS_ARB_VP10[i]!=NULL ) {
-      if(0 == g_ascii_strcasecmp(KEYWORDS_ARB_VP10[i], str ) ) {
-	gtk_text_buffer_apply_tag_by_name(buf, "keyword", &start, &end );
-	/* g_print("TAGGED: %s\n", str ); */
-	return;
-      }
-
-      i++;
-    }
-
-    /* not required: it is not a keyword, reset it to a normal text */
-    /* gtk_text_buffer_apply_tag_by_name(buf, "normal", &start, &end ); */
-
-}
 
 gboolean is_separator(const gchar* c )
 {
@@ -166,76 +134,193 @@ gboolean is_separator(const gchar* c )
   return FALSE;
 }
 
-static void syntax_highlight_buffer()
+static gboolean handle(GtkTextBuffer* buf, GtkTextIter* start, GtkTextIter* end, const char** keywords, const char* tag_name )
 {
+    gchar* txt =gtk_text_buffer_get_text(buf, start, end, TRUE );
+    guint i =0;
 
-  GtkTextBuffer* buf;
-  GtkTextIter start;
-  GtkTextIter end;
-
-  gchar* txt;
-
-  gint i;
-  gint max;
-
-  GString* tmp;
-
-  tmp =g_string_new("");
-
-  buf =gtk_text_view_get_buffer(vp_txt_view );
-
-  i =0;
-
-  max =gtk_text_buffer_get_char_count(buf);
-
-  //g_print("max =%d\n", max );
-
-  while(TRUE ) {
-
-    gint j =i;
-
-    while(TRUE ) {
-      gtk_text_buffer_get_iter_at_offset(buf, &start, j );
-      gtk_text_buffer_get_iter_at_offset(buf, &end, j+1 );
-      txt =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
-      
-      if(j > max ) {
-	//break; //end of buffer reached
-	g_print("goto: %d\n", j );
-	goto endp;
-      }
-
-      if(is_separator(txt ) ) {
-
-	gint co =0;
-
-	/* print the buffer */
-	//g_print("buffer: %s\n", tmp->str );
-
-	handle_keyword(buf,i, j );
-
-	co =handle_comment_separator(buf, j );
-
-	/* print the separator */
-	//g_print("separator: %s\n", txt );
+    while(keywords[i]!=NULL ) {
+	if(0 == strcmp(keywords[i], txt ) ) {
+	    gtk_text_buffer_apply_tag_by_name(buf, tag_name, start, end );
+	    return TRUE;
+	}
 	
-	/* reset the buffer */
-	tmp =g_string_erase(tmp, 0, -1 );
-
-	i =j+co+1;
-	break;
-      }
-
-      tmp =g_string_append(tmp, txt );
-      j++;
+	i++;
     }
+    
+    return FALSE;
+}
 
-  }
+static void handle_text(GtkTextBuffer* buf, guint so, guint eo ) 
+{
+    GtkTextIter start;
+    GtkTextIter end;
+    gchar* txt;
 
- endp:
+
+    gtk_text_buffer_get_iter_at_offset(buf, &start, so );
+    gtk_text_buffer_get_iter_at_offset(buf, &end, eo );
+
+    /* cleanup/fix later - remove all posible tags */
+    gtk_text_buffer_remove_tag_by_name(buf, "keyword-vp-header", &start, &end );
+    gtk_text_buffer_remove_tag_by_name(buf, "keyword-vp-defs", &start, &end );
+    gtk_text_buffer_remove_tag_by_name(buf, "keyword-vp-instructions", &start, &end );
+    gtk_text_buffer_remove_tag_by_name(buf, "keyword-vp-builtins", &start, &end );
+
+    gtk_text_buffer_remove_tag_by_name(buf, "comment", &start, &end );
+
+    /* get the actual text , and check if it is a keyword - this could be a optimized later */
+    //txt =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
+
+    if(handle(buf, &start, &end, KEYWORDS_ARB_VP10_HEADER, "keyword-vp-header"  ) /* this needs to be custom */
+       || handle(buf, &start, &end, KEYWORDS_ARB_VP10_DEFS, "keyword-vp-defs" ) 
+       || handle(buf, &start, &end, KEYWORDS_ARB_VP10_INSTRUCTIONS, "keyword-vp-instructions" ) 
+       || handle(buf, &start, &end, KEYWORDS_ARB_VP10_BUILTINS, "keyword-vp-builtins" ) 
+	
+	) {
+	
+	return;
+    }
 
 
 }
+
+static guint handle_separator(GtkTextBuffer* buf, guint so, guint eo )
+{
+    GtkTextIter start;
+    GtkTextIter end;
+    gchar* txt;
+
+    guint offset =0;
+
+    gtk_text_buffer_get_iter_at_offset(buf, &start, so );
+    gtk_text_buffer_get_iter_at_offset(buf, &end, eo );
+  
+    txt =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
+  
+    //is it a comment ?
+    if((0 == g_ascii_strncasecmp(txt, "#", 1 ) ) ) {
+
+	/* BUG ? */
+	/* gtk_text_iter_forward_to_line_end(&end); */
+
+	/* I HAD to do it this way ! */
+	while(!gtk_text_iter_ends_line(&end) ) {
+	    gtk_text_iter_forward_char(&end);
+	}
+	
+	/* g_print("comment: %s\n", gtk_text_buffer_get_text(buf, &start, &end, TRUE ) ); */
+
+
+	gtk_text_buffer_apply_tag_by_name(buf, "comment", &start, &end );
+
+	offset =  gtk_text_iter_get_offset(&end ) - so;
+    }
+
+    return offset;
+
+}
+
+
+static void handle_header(GtkTextBuffer* buf ) 
+{
+    GtkTextIter start;
+    GtkTextIter end;
+    gchar* txt;
+
+    gtk_text_buffer_get_iter_at_offset(buf, &start, 0 );
+    gtk_text_buffer_get_iter_at_offset(buf, &end, 10 );
+
+    gtk_text_buffer_remove_tag_by_name(buf, "keyword-vp-header", &start, &end );
+
+    txt =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
+
+    if(0==strcmp(txt, "!!ARBvp1.0") ) {
+	gtk_text_buffer_apply_tag_by_name(buf, "keyword-vp-header", &start, &end );
+    }
+
+}
+
+static void handle_end(GtkTextBuffer* buf ) 
+{
+    GtkTextIter start;
+    GtkTextIter end;
+    gchar* txt;
+    gint e0 =0;
+
+    gtk_text_buffer_get_end_iter(buf, &end );
+    start =end;
+
+    //eo =gtk_text_iter_get_offset(&end);
+    if(!gtk_text_iter_backward_chars(&start, 3 ))
+	return;
+
+    //gtk_text_buffer_remove_tag_by_name(buf, "keyword-vp-header", &start, &end );
+
+    txt =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
+
+    //g_print("end tag: %s\n", txt );
+
+    if(0==strcmp(txt, "END") ) {
+	gtk_text_buffer_apply_tag_by_name(buf, "keyword-vp-header", &start, &end );
+    }
+
+}
+
+static void syntax_highlight_buffer()
+{
+
+  GString* tmp =g_string_new("");
+  GtkTextBuffer* buf =gtk_text_view_get_buffer(vp_txt_view );
+
+  const gint max =gtk_text_buffer_get_char_count(buf) + 1; /* +1 means to position */
+
+  gint i =1;
+  gint j =0;
+
+  while(i < max ) {
+
+      GtkTextIter start;
+      GtkTextIter end;
+
+      gchar* txt;
+
+      gtk_text_buffer_get_iter_at_offset(buf, &start, i-1 );
+      gtk_text_buffer_get_iter_at_offset(buf, &end, i );
+
+      txt =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
+
+      if(is_separator(txt ) ) {
+
+	  guint e =0;
+
+	  /* do we have something in the before BEFORE the separator ?*/
+	  if(0 < tmp->str ) {
+	      handle_text(buf, j, i-1 );
+	      tmp =g_string_erase(tmp, 0, -1 );
+	  }
+
+	  e =handle_separator(buf, i-1, i );
+	  
+	  j =i+e;
+	  i =j+1;
+	  
+
+      }
+      else {
+	  tmp =g_string_append(tmp, txt );
+	  i++;
+      }
+
+      /* handle specials, later...  */
+      handle_header(buf);
+      handle_end(buf);
+  }
+
+  
+
+}
+
 
 static void print_error_to_console(const char* err_msg ) {
 
