@@ -53,8 +53,8 @@ gboolean exit_dlg_button_quit_clicked(GtkWidget *widget, GdkEventExpose *event, 
 
 gboolean exit_dlg_button_no_clicked(GtkWidget *widget, GdkEventExpose *event, gpointer user_data );
 
-gboolean button_press_event (GtkWidget* widget, GdkEventButton* event, gpointer data );
+gboolean button_press_event(GtkWidget* widget, GdkEventButton* event, gpointer data );
 
-gboolean button_release_event (GtkWidget* widget, GdkEventButton* event, gpointer data );
+gboolean button_release_event(GtkWidget* widget, GdkEventButton* event, gpointer data );
 
-gboolean motion_notify_event (GtkWidget* widget, GdkEventMotion* event, gpointer data );
+gboolean motion_notify_event(GtkWidget* widget, GdkEventMotion* event, gpointer data );

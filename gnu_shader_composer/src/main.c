@@ -26,6 +26,7 @@ char *package_datadir;
 GtkWidget* main_window;
 GtkWidget* gsc_quit_dialog;
 
+
 int
 main(int argc, char *argv[] )
 {
