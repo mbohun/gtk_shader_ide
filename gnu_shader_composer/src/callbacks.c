@@ -28,15 +28,22 @@ extern GtkWidget* console_txt_view;
 extern GtkTextView* vp_txt_view;
 extern GtkTextView* fp_txt_view;
 
+static GLenum blend_func_src =GL_SRC_ALPHA;
+static GLenum blend_func_dst =GL_ONE_MINUS_SRC_ALPHA;
+
 #ifndef GL_FRAGMENT_PROGRAM_ARB /* crappy condition */
 #include <gdk/gdkglglext.h>
 extern GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
+
 static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
 {
     GLint error_pos;
 
     GLuint vp;
     GLuint fp;
+
+    g_print("OLD version of OpenGL: GL_FRAGMENT_PROGRAM_ARB: 0x%x\n", GL_FRAGMENT_PROGRAM_ARB );
+    g_print("GdkGL_GL_ARB_vertex_program: 0x%x\n", gdk_glext_vp );
 
     if( (NULL==test_arb_vp) || (NULL==test_arb_fp) ) {
 	/* reject invalid vertex/fragment programs */
@@ -104,6 +111,8 @@ static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
 
     GLuint vp;
     GLuint fp;
+
+    g_print("New version of OpenGL: GL_FRAGMENT_PROGRAM_ARB: %x\n", GL_FRAGMENT_PROGRAM_ARB );
 
     if( (NULL==test_arb_vp) || (NULL==test_arb_fp) ) {
 	/* reject invalid vertex/fragment programs */
@@ -798,7 +807,7 @@ void on_drawing_area_expose_event(GtkWidget *widget, gpointer user_data )
 
   //glCallList(1);
   glEnable( GL_BLEND );
-  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+  glBlendFunc(blend_func_src, blend_func_dst );
 
   gdk_gl_draw_teapot(TRUE, 1.0);
 
@@ -1225,4 +1234,45 @@ void vp_txt_buffer_modified_changed_handler(GtkTextBuffer *textbuffer, gpointer 
 {
     //g_print("vp_txt_buffer_modified_changed_handler(), " );
     //syntax_highlight_buffer_dummy(textbuffer );
+}
+
+
+struct {
+    const char* name;
+    const GLenum val;
+} BLEND_FUNC_SRC[] =
+{
+    {"GL_ZERO",			GL_ZERO			},
+    {"GL_ONE",			GL_ONE			},
+    {"GL_DST_COLOR",		GL_DST_COLOR		},
+    {"GL_ONE_MINUS_DST_COLOR",	GL_ONE_MINUS_DST_COLOR	},
+    {"GL_SRC_ALPHA",		GL_SRC_ALPHA		},
+    {"GL_ONE_MINUS_SRC_ALPHA",	GL_ONE_MINUS_SRC_ALPHA	},
+    {"GL_DST_ALPHA", 		GL_DST_ALPHA		},
+    {"GL_ONE_MINUS_DST_ALPHA",	GL_ONE_MINUS_DST_ALPHA	},
+    {"GL_SRC_ALPHA_SATURATE",	GL_SRC_ALPHA_SATURATE	},
+    NULL
+};
+
+struct {
+    const char* name;
+    const GLenum val;
+} BLEND_FUNC_DST[] =
+{
+    {"GL_ZERO",			GL_ZERO			},
+    {"GL_ONE",			GL_ONE			},
+    {"GL_SRC_COLOR",		GL_SRC_COLOR		},
+    {"GL_ONE_MINUS_SRC_COLOR",	GL_ONE_MINUS_SRC_COLOR	},
+    {"GL_SRC_ALPHA",		GL_SRC_ALPHA		},
+    {"GL_ONE_MINUS_SRC_ALPHA",	GL_ONE_MINUS_SRC_ALPHA	},
+    {"GL_DST_ALPHA", 		GL_DST_ALPHA		},
+    {"GL_ONE_MINUS_DST_ALPHA",	GL_ONE_MINUS_DST_ALPHA	},
+    NULL
+};
+
+
+void change_blend_func() {
+    blend_func_src =GL_SRC_ALPHA_SATURATE;
+    blend_func_dst =GL_ONE;
+    on_drawing_area_expose_event(gl_win, NULL );
 }

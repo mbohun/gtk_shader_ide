@@ -9,14 +9,10 @@
 
 #include <gtk/gtk.h>
 #include <gtk/gtkgl.h>
-
 #include <glade/glade.h>
-
 #include <GL/gl.h>
-#include <GL/glu.h>
 
 #include "support.h"
-
 #include "callbacks.h"
 
 #ifdef G_OS_WIN32
@@ -33,6 +29,7 @@ GtkWidget* fp_txt_view;
 GtkWidget* vp_txt_view;
 
 #ifndef GL_FRAGMENT_PROGRAM_ARB /* crappy condition */
+#define OLD_GL_VERSION 1
 #include <gdk/gdkglglext.h>
 GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
 #endif
@@ -290,12 +287,15 @@ int main(int argc, char *argv[] )
   gtk_widget_show(main_window);
 
   /* !!! the GL extension must be loaded AFTER the gl widget was shown */
-#ifndef GL_FRAGMENT_PROGRAM_ARB /* crappy condition */
+#ifdef OLD_GL_VERSION /* crappy condition */
   gdk_glext_vp =gdk_gl_get_GL_ARB_vertex_program();
   if(NULL == gdk_glext_vp ) { 
       g_print("ERROR: Failed to init GL_ARB_vertex_program ext !/n");
       exit(-1);
   }
+
+    g_print("main.c: GdkGL_GL_ARB_vertex_program: 0x%x\n", gdk_glext_vp );
+
 #endif  
 /*   g_print("DEBUG: GL_ARB_vertex_program ext init success.../n"); */
 
