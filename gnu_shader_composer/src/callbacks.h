@@ -65,55 +65,6 @@ gboolean button_release_event(GtkWidget* widget, GdkEventButton* event, gpointer
 
 gboolean motion_notify_event(GtkWidget* widget, GdkEventMotion* event, gpointer data );
 
-
-
-/* vp text view */
-gboolean on_vp_textview_delete_from_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_vp_textview_insert_at_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_vp_textview_move_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_vp_textview_move_focus(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_vp_textview_move_viewport(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_vp_textview_select_all(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_vp_textview_toggle_overwrite(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_vp_textview_key_press_event(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_vp_textview_key_release_event(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_vp_textview_state_changed(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_vp_textview_selection_received(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-
-/* fp text view */
-gboolean on_fp_textview_delete_from_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_fp_textview_insert_at_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_fp_textview_move_cursor(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_fp_textview_move_focus(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_fp_textview_move_viewport(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_fp_textview_select_all(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_fp_textview_toggle_overwrite(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_fp_textview_key_press_event(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_fp_textview_key_release_event(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_fp_textview_state_changed(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
-gboolean on_fp_textview_selection_received(GtkWidget* widget, GdkEventMotion* event, gpointer data );
-
 /* hpaned1 */
 void on_hpaned1_check_resize(GtkWidget* widget, gpointer data );
 gboolean on_hpaned1_accept_position(GtkWidget* widget, gpointer data );
@@ -125,3 +76,9 @@ void on_toolbutton_compile_execute_shader_clicked(GtkWidget* widget, gpointer da
 
 /* toolbar, toolbutton remove shareds */
 void on_toolbutton_remove_shaders_clicked(GtkWidget* widget, gpointer data );
+
+/* vp text buffer handler */
+void vp_txt_buffer_changed_handler(GtkTextBuffer *textbuffer, gpointer user_dat );
+
+/* fp text buffer handler */
+void fp_txt_buffer_changed_handler(GtkTextBuffer *textbuffer, gpointer user_dat );

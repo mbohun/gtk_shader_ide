@@ -248,17 +248,10 @@ int main(int argc, char *argv[] )
 			   "on_toolbutton_remove_shaders_clicked", 
 			   G_CALLBACK(on_toolbutton_remove_shaders_clicked ) );
 
-
-
-  /* connect the signal handlers for vp and fp txt editors */
-  glade_xml_signal_connect(xml, 
-			   "on_vp_textview_key_press_event", 
-			   G_CALLBACK(on_vp_textview_key_press_event ) );
-
-
-  glade_xml_signal_connect(xml, 
-			   "on_vp_textview_key_release_event", 
-			   G_CALLBACK(on_vp_textview_key_release_event ) );
+  g_signal_connect(gtk_text_view_get_buffer(vp_txt_view), 
+		   "changed", 
+		   G_CALLBACK(vp_txt_buffer_changed_handler), 
+		   NULL );
 
 
   gtk_widget_show(main_window);
