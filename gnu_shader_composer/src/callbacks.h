@@ -3,6 +3,12 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+struct shader_txt_buffers_t {
+  GtkTextBuffer *vp_buffer;
+  GtkTextBuffer *fp_buffer;
+};
+
+
 void
 on_new1_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
@@ -113,3 +119,6 @@ void on_hpaned1_check_resize(GtkWidget* widget, gpointer data );
 gboolean on_hpaned1_accept_position(GtkWidget* widget, gpointer data );
 void on_hpaned1_state_changed(GtkWidget* widget, gpointer data );
 void on_hpaned1_move_handle(GtkWidget* widget, gpointer data );
+
+/* toolbar, toolbutton compile and execute shareds */
+void on_toolbutton_compile_execute_shader_clicked(GtkWidget* widget, gpointer data );

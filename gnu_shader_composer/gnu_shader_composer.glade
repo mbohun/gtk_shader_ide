@@ -85,7 +85,7 @@
 		      <property name="visible">True</property>
 		      <property name="label">gtk-quit</property>
 		      <property name="use_stock">True</property>
-		      <signal name="activate" handler="on_quit1_activate" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
+		      <signal name="activate" handler="on_main_menu_item_file_quit" last_modification_time="Thu, 30 Sep 2004 13:41:40 GMT"/>
 		    </widget>
 		  </child>
 		</widget>
@@ -262,13 +262,14 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkToolButton" id="toolbutton5">
+		<widget class="GtkToolButton" id="toolbutton_compile_execute_shader">
 		  <property name="visible">True</property>
-		  <property name="tooltip" translatable="yes">Build/Execute Shaders</property>
+		  <property name="tooltip" translatable="yes">Compile and Execute Shaders</property>
 		  <property name="stock_id">gtk-execute</property>
 		  <property name="visible_horizontal">True</property>
 		  <property name="visible_vertical">True</property>
 		  <property name="is_important">False</property>
+		  <signal name="clicked" handler="on_toolbutton_compile_execute_shader_clicked" last_modification_time="Mon, 11 Oct 2004 13:39:33 GMT"/>
 		</widget>
 		<packing>
 		  <property name="expand">False</property>
@@ -290,17 +291,16 @@
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
 	  <property name="position">256</property>
- 		
 	  <signal name="check_resize" handler="on_hpaned1_check_resize" last_modification_time="Mon, 11 Oct 2004 10:40:23 GMT"/>
 	  <signal name="accept_position" handler="on_hpaned1_accept_position" last_modification_time="Mon, 11 Oct 2004 10:40:56 GMT"/>
 	  <signal name="state_changed" handler="on_hpaned1_state_changed" last_modification_time="Mon, 11 Oct 2004 10:41:36 GMT"/>
 	  <signal name="move_handle" handler="on_hpaned1_move_handle" last_modification_time="Mon, 11 Oct 2004 10:41:36 GMT"/>
+
 	  <child>
 	    <widget class="GtkVBox" id="vbox3">
 	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
 	      <property name="spacing">0</property>
-
 
 	      <child>
 		<widget class="GtkVPaned" id="vpaned2">
@@ -331,7 +331,6 @@
 
 			  <child>
 			    <widget class="GtkDrawingArea" id="drawing_area">
-
 			      <property name="width_request">200</property>
 			      <property name="height_request">200</property>
 			      <property name="visible">True</property>

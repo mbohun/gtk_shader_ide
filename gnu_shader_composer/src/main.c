@@ -34,10 +34,11 @@ main(int argc, char *argv[] )
 
   GladeXML* xml;
   GdkGLConfig* glconfig;
-
   GtkWidget* drawing_area;
 
   gboolean dummy;
+
+  struct shader_txt_buffers_t shader_buffers;
 
 #ifdef G_OS_WIN32
   gchar *temp;
@@ -166,7 +167,10 @@ main(int argc, char *argv[] )
 			   G_CALLBACK(on_main_menu_item_file_quit ) );
 
   
-  
+  glade_xml_signal_connect_data(xml, 
+				"on_toolbutton_compile_execute_shader_clicked", 
+				G_CALLBACK(on_toolbutton_compile_execute_shader_clicked ),
+				&shader_buffers );  
 
 
 /*   glade_xml_signal_connect_data(xml, */
@@ -197,6 +201,13 @@ main(int argc, char *argv[] )
 
   printf("dummy: %s\n", dummy?"TRUE":"FALSE" );
 
+  shader_buffers.vp_buffer =gtk_text_view_get_buffer(glade_xml_get_widget(xml, "vp_textview" ) );
+  shader_buffers.fp_buffer =gtk_text_view_get_buffer(glade_xml_get_widget(xml, "fp_textview" ) );
+
+  glade_xml_signal_connect_data(xml, 
+				"on_toolbutton_compile_execute_shader_clicked", 
+				G_CALLBACK(on_toolbutton_compile_execute_shader_clicked ),
+				&shader_buffers );
 
   gtk_widget_show(main_window);
 
