@@ -9,11 +9,15 @@
 
 #include <gtk/gtk.h>
 #include <gtk/gtkgl.h>
-//#include <gdk/gdkglglext.h>
+
 #include <glade/glade.h>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
+
+//#include "gl_ext.h"
+
+//#include <gdk/gdkglglext.h>
 
 #include "support.h"
 
@@ -24,32 +28,24 @@ char *package_prefix;
 char *package_datadir;
 #endif
 
-
 /* globals for now */
 GtkWidget* main_window;
 GtkWidget* gsc_quit_dialog;
+GtkWidget* console_txt_view;
 
-/* GdkGL_GL_ARB_vertex_program* gdk_glext_vp; */
+//GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
 
-/* static void init_gl_ext(void) */
-/* { */
-/*   gdk_glext_vp =gdk_gl_get_GL_ARB_vertex_program(); */
-/*   if(NULL == gdk_glext_vp ) { */
-/*     g_print("ERROR: Failed to init GL_ARB_vertex_program ext !/n"); */
-/*     exit(-1); */
-/*   } */
-  
-/*   g_print("DEBUG: GL_ARB_vertex_program ext init success.../n"); */
-/* } */
+GtkTextTag *tag;
 
-
-int
-main(int argc, char *argv[] )
+int main(int argc, char *argv[] )
 {
 
   GladeXML* xml;
   GdkGLConfig* glconfig;
   GtkWidget* drawing_area;
+
+  GtkTextView* vp_txt_view;
+  GtkTextView* fp_txt_view;
 
   gboolean dummy;
 
@@ -170,11 +166,9 @@ main(int argc, char *argv[] )
 			   G_CALLBACK(on_main_menu_item_file_quit ) );
 
   
-  glade_xml_signal_connect_data(xml, 
-				"on_toolbutton_compile_execute_shader_clicked", 
-				G_CALLBACK(on_toolbutton_compile_execute_shader_clicked ),
-				&shader_buffers );  
+
  
+  
   main_window = glade_xml_get_widget(xml, "main_window" );
 
   //pre-create the dialogs
@@ -185,6 +179,14 @@ main(int argc, char *argv[] )
  			       main_window );   //parent
 
   gtk_container_set_reallocate_redraws (GTK_CONTAINER(main_window), TRUE );
+
+
+  console_txt_view =glade_xml_get_widget(xml, "console_textview" );
+  tag =gtk_text_buffer_create_tag(gtk_text_view_get_buffer(console_txt_view), 
+				  "martin", 
+				  "weight", 500, 
+				  NULL );
+
 
   printf("drawing_area: %u\n", drawing_area );
   drawing_area = glade_xml_get_widget (xml, "drawing_area" );
@@ -199,26 +201,48 @@ main(int argc, char *argv[] )
 
   printf("dummy: %s\n", dummy?"TRUE":"FALSE" );
 
-  shader_buffers.vp_buffer =gtk_text_view_get_buffer(glade_xml_get_widget(xml, "vp_textview" ) );
-  shader_buffers.fp_buffer =gtk_text_view_get_buffer(glade_xml_get_widget(xml, "fp_textview" ) );
+
+  vp_txt_view =glade_xml_get_widget(xml, "vp_textview" );
+  fp_txt_view =glade_xml_get_widget(xml, "fp_textview" );			
+
+  shader_buffers.vp_buffer =gtk_text_view_get_buffer(vp_txt_view );
+  shader_buffers.fp_buffer =gtk_text_view_get_buffer(fp_txt_view );
 
   glade_xml_signal_connect_data(xml, 
 				"on_toolbutton_compile_execute_shader_clicked", 
 				G_CALLBACK(on_toolbutton_compile_execute_shader_clicked ),
 				&shader_buffers );
 
+  glade_xml_signal_connect(xml, 
+			   "on_toolbutton_remove_shaders_clicked", 
+			   G_CALLBACK(on_toolbutton_remove_shaders_clicked ) );
+
+
+
+  /* connect the signal handlers for vp and fp txt editors */
+  glade_xml_signal_connect(xml, 
+			   "on_vp_textview_key_press_event", 
+			   G_CALLBACK(on_vp_textview_key_press_event ) );
+
+
+  glade_xml_signal_connect(xml, 
+			   "on_vp_textview_key_release_event", 
+			   G_CALLBACK(on_vp_textview_key_release_event ) );
+
+
   gtk_widget_show(main_window);
 
-  /* the GL extension must be loaded AFTER the gl widget was shown */
+  /* !!! the GL extension must be loaded AFTER the gl widget was shown */
+/*   gdk_glext_vp =gdk_gl_get_GL_ARB_vertex_program(); */
+/*   if(NULL == gdk_glext_vp ) {  */
+/*       g_print("ERROR: Failed to init GL_ARB_vertex_program ext !/n"); */
+/*       exit(-1); */
+/*   } */
+  
+/*   g_print("DEBUG: GL_ARB_vertex_program ext init success.../n"); */
+
+  //???
   //init_gl_ext();
-
-  /*
-  g_signal_connect( (gpointer)main_window, 
-		    "destroy",
-		    G_CALLBACK(gtk_main_quit),
-                     NULL);
-
-  */
 
   gtk_main ();
 

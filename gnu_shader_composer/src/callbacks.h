@@ -122,3 +122,6 @@ void on_hpaned1_move_handle(GtkWidget* widget, gpointer data );
 
 /* toolbar, toolbutton compile and execute shareds */
 void on_toolbutton_compile_execute_shader_clicked(GtkWidget* widget, gpointer data );
+
+/* toolbar, toolbutton remove shareds */
+void on_toolbutton_remove_shaders_clicked(GtkWidget* widget, gpointer data );

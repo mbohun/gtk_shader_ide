@@ -4,10 +4,12 @@
 
 #include <gtk/gtk.h>
 
-#include "callbacks.h"
-//#include "interface.h"
-#include "support.h"
+//#include "gl_ext.h"
 
+//#include <gdk/gdkglglext.h>
+
+#include "callbacks.h"
+#include "support.h"
 #include "trackball.h"
 
 #define DIG_2_RAD (G_PI / 180.0)
@@ -21,56 +23,122 @@
 
 extern GtkWidget* main_window;
 extern GtkWidget* gsc_quit_dialog;
-GtkWidget* gl_win;
+extern GtkWidget* console_txt_view;
 
-static void init_arb_vpfp_dummy(char* test_arb_vp, char* test_arb_fp ) {}
-static void (*init_shaders)(char*, char* ) =init_arb_vpfp_dummy;
 
-static void init_arb_vpfp(char* test_arb_vp, char* test_arb_fp )
-{
-  GLuint vp;
-  GLuint fp;
+//extern GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
 
-  if( (NULL==test_arb_vp) || (NULL==test_arb_fp) ) {
-    /* reject invalid vertex/fragment programs */
-    return;
-  }
+static GtkWidget* gl_win;
 
-  //Enable ARB vertex program.
-  glEnable(GL_VERTEX_PROGRAM_ARB );
+extern GtkTextTag *tag;
 
-  //Generate a program.
-  glGenProgramsARB(1, &vp );
+static void print_error_to_console(const char* err_msg ) {
 
-  //Bind the program.
-  glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp );	
+    GtkTextBuffer* console_txt_buffer;
+    GtkTextIter start, end;
+    GdkColor color;
+    
+    console_txt_buffer =gtk_text_view_get_buffer(console_txt_view);
 
-  //Load the program.
-  glProgramStringARB(GL_VERTEX_PROGRAM_ARB, 
-		     GL_PROGRAM_FORMAT_ASCII_ARB, 
-		     strlen((const char*)test_arb_vp ), 
-		     test_arb_vp );
-  
-  //Enable ARB vertex program.
-  glEnable(GL_FRAGMENT_PROGRAM_ARB );
+    /* start is the end, because we are going to append at the end */
+    gtk_text_buffer_get_end_iter(console_txt_buffer, &start );
 
-  //Generate a program.
-  glGenProgramsARB(1, &fp );
+    gtk_text_buffer_insert(console_txt_buffer, &start, err_msg, strlen(err_msg ) );
 
-  //Bind the program.
-  glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, fp );	
+    gtk_text_buffer_get_end_iter(console_txt_buffer, &end );
 
-  //Load the program.
-  glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, 
-		     GL_PROGRAM_FORMAT_ASCII_ARB, 
-		     strlen((const char*)test_arb_fp ), 
-		     test_arb_fp );
+    //gtk_text_buffer_apply_tag(console_txt_buffer, tag, &start, &end );
+    gtk_text_buffer_apply_tag_by_name(console_txt_buffer, "martin", &start, &end );
 
-  //:-) we set the new shaders so reset the init to dummy
-  //init_shaders =init_arb_vpfp_dummy;
+    gtk_text_view_scroll_to_iter(console_txt_view,
+				 &end,
+				 0.0,
+				 FALSE,
+				 0.0,
+				 0.0 );
 
+    //g_signal_emit_by_name(gl_win, "expose_event" ); //emit signal - SEG FAULT !
+    on_drawing_area_expose_event(gl_win, NULL );
 }
 
+/* typedef void (*ProgramStringARB_t)(GLenum target, GLenum format, GLuint len, const GLbyte *string ); */
+/* ProgramStringARB_t glProgramStringARB =NULL; */
+
+/* static void compile_execute_vpfp_dummy(char* test_arb_vp, char* test_arb_fp ) {} */
+/* static void (*init_shaders)(char*, char* ) =compile_execute_vpfp_dummy; */
+
+static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
+{
+    GLint error_pos;
+
+    GLuint vp;
+    GLuint fp;
+
+/*   glProgramStringARB =NULL; */
+/*   g_print("glProgramStringARB: %u\n", glProgramStringARB ); */
+
+
+/*   glProgramStringARB =(ProgramStringARB_t)gdk_gl_get_proc_address("glProgramStringARB"); */
+/*   g_print("glProgramStringARB: %u\n", glProgramStringARB ); */
+
+    if( (NULL==test_arb_vp) || (NULL==test_arb_fp) ) {
+	/* reject invalid vertex/fragment programs */
+	return;
+    }
+
+    //Enable ARB vertex program.
+    glEnable(GL_VERTEX_PROGRAM_ARB );
+
+    //Generate a program.
+    /* gdk_glext_vp-> */glGenProgramsARB(1, &vp );
+
+    //Bind the program.
+    /* gdk_glext_vp-> */glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp );	
+
+    //Load the program.
+    /* gdk_glext_vp-> */glProgramStringARB(GL_VERTEX_PROGRAM_ARB, 
+				     GL_PROGRAM_FORMAT_ASCII_ARB, 
+				     strlen((const char*)test_arb_vp ), 
+				     test_arb_vp );
+
+
+    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &error_pos );
+    //g_print("GL_PROGRAM_ERROR_POSITION_ARB: %d\n", error_pos );
+
+    if( -1 != error_pos ) {
+	//g_print("Vertex Program ERROR: %s\n", glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	print_error_to_console(glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	glDisable(GL_VERTEX_PROGRAM_ARB );
+	return;
+    }
+
+    //Enable ARB vertex program.
+    glEnable(GL_FRAGMENT_PROGRAM_ARB );
+
+    //Generate a program.
+   /*  gdk_glext_vp-> */glGenProgramsARB(1, &fp );
+
+    //Bind the program.
+    /* gdk_glext_vp-> */glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, fp );	
+
+    //Load the program.
+    /* gdk_glext_vp-> */glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, 
+				     GL_PROGRAM_FORMAT_ASCII_ARB, 
+				     strlen((const char*)test_arb_fp ), 
+				     test_arb_fp );
+
+    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &error_pos );
+    //g_print("GL_PROGRAM_ERROR_POSITION_ARB: %d\n", error_pos );
+
+    if( -1 != error_pos ) {
+	//g_print("Fragment Program - ERROR: %s\n", glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	print_error_to_console(glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
+	glDisable(GL_VERTEX_PROGRAM_ARB );
+	glDisable(GL_FRAGMENT_PROGRAM_ARB );
+	return;
+    }
+
+}
 
 
 
@@ -209,9 +277,9 @@ void on_drawing_area_realize (GtkWidget* widget, gpointer   user_data )
   GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
   GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
 
-  GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
-  GLfloat diffuse[] = {1.0, 1.0, 1.0, 1.0};
-  GLfloat position[] = {0.0, 3.0, 3.0, 0.0};
+  GLfloat ambient[] = {0.0, 0.0, 0.2, 1.0};
+  GLfloat diffuse[] = {0.2, 0.3, 0.6, 1.0};
+  GLfloat position[] = {1.0, 3.0, 1.0, 0.0};
 
   GLfloat lmodel_ambient[] = {0.2, 0.2, 0.2, 1.0};
   GLfloat local_view[] = {0.0};
@@ -668,7 +736,52 @@ void on_toolbutton_compile_execute_shader_clicked(GtkWidget* widget, gpointer da
   fp_txt =gtk_text_buffer_get_text(shaders->fp_buffer, &start, &end, FALSE );    
   g_printf("%u: Fragment Shader string:\n%s\n", counter++, fp_txt );
 
-  init_arb_vpfp(vp_txt, fp_txt);
+  compile_execute_vpfp(vp_txt, fp_txt);
   
-  on_drawing_area_expose_event(gl_win, NULL );
+  //g_printf("what the hell ???\n");
+
+  on_drawing_area_expose_event(gl_win, NULL ); //call the signal handler directly
+  //g_signal_emit_by_name(gl_win, "expose_event" ); //emit signal
+  
+}
+
+
+
+void on_toolbutton_remove_shaders_clicked(GtkWidget* widget, gpointer data )
+{
+    GtkTextBuffer* console_txt_buffer;
+    GtkTextIter start, end;
+    GdkColor color;
+    GtkTextTag *tag;
+
+    static const gchar* msg ="Shaders removed !\n";
+
+    g_print("on_toolbutton_remove_shaders_clicked()\n");
+
+    glDisable(GL_VERTEX_PROGRAM_ARB );
+    glDisable(GL_FRAGMENT_PROGRAM_ARB );
+    
+    print_error_to_console(msg);
+
+/*     console_txt_buffer =gtk_text_view_get_buffer(console_txt_view); */
+
+/*     gtk_text_buffer_get_end_iter(console_txt_buffer, &end ); */
+
+
+/*     gdk_color_parse ("green", &color); */
+/*     gtk_widget_modify_text (console_txt_view, GTK_STATE_NORMAL, &color); */
+
+/*     gtk_text_buffer_insert(console_txt_buffer, &end, msg, strlen(msg) ); */
+
+/*     gtk_text_buffer_get_end_iter(console_txt_buffer, &end ); */
+/*     gtk_text_view_scroll_to_iter(console_txt_view, */
+/* 				 &end, */
+/* 				 0.0, */
+/* 				 FALSE, */
+/* 				 0.0, */
+/* 				 0.0 ); */
+
+/*     //g_signal_emit_by_name(gl_win, "expose_event" ); //emit signal - SEG FAULT ! */
+/*     on_drawing_area_expose_event(gl_win, NULL ); */
+
 }
