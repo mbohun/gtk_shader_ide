@@ -20,17 +20,188 @@
 #define VIEW_SCALE_MAX 2.0
 #define VIEW_SCALE_MIN 0.5
 
-
 extern GtkWidget* main_window;
 extern GtkWidget* gsc_quit_dialog;
 extern GtkWidget* console_txt_view;
 
+extern GtkWidget* fp_txt_view;
+extern GtkWidget* vp_txt_view;
+
+/* private util functions */
+
+//debug msg counter
+static unsigned int counter =0;
 
 //extern GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
 
 static GtkWidget* gl_win;
 
-extern GtkTextTag *tag;
+//extern GtkTextTag *tag;
+
+/* this is only a test, the real stuff will read this type of info from an external XML file */
+static gchar* KEYWORDS_ARB_VP10[] =
+{
+    "!!ARBvp1.0", /* just for now */
+    "ABS", "ADD", "ADDRESS", "ALIAS", "ARL", "ATTRIB", 
+    "DP3", "DP4", "DPH", "DST",
+    "END", "EX2", "EXP", 
+    "FLR", "FRC", 
+    "LG2", "LIT", "LOG", 
+    "MAD", "MAX", "MIN", "MOV", "MUL", 
+    "OPTION", "OUTPUT",
+    "PARAM", "POW", 
+    "RCP", "RSQ", 
+    "SGE", "SLT", "SUB", "SWZ", 
+    "TEMP", 
+    "XPD", 
+    "program", 
+    "result",
+    "state", 
+    "vertex",
+    NULL
+};
+
+static gchar* KEYWORDS_ARB_FP10[] =
+{
+    "ABS", "ABS_SAT", "ADD", "ADD_SAT", "ALIAS", "ATTRIB",
+    "CMP", "CMP_SAT", "COS", "COS_SAT",
+    "DP3", "DP3_SAT", "DP4", "DP4_SAT", "DPH", "DPH_SAT", "DST", "DST_SAT", 
+    "END", "EX2", "EX2_SAT", 
+    "FLR", "FLR_SAT", "FRC", "FRC_SAT", 
+    "KILL", 
+    "LG2", "LG2_SAT", "LIT", "LIT_SAT", "LRP", "LRP_SAT",
+    "MAD", "MAD_SAT", "MAX", "MAX_SAT", "MIN", "MIN_SAT", "MOV", "MOV_SAT", "MUL", "MUL_SAT", 
+    "OPTION", "OUTPUT", 
+    "PARAM", "POW", "POW_SAT", 
+    "RCP", "RCP_SAT", "RSQ", "RSQ_SAT", 
+    "SIN", "SIN_SAT", "SCS", "SCS_SAT", "SGE", "SGE_SAT", "SLT", "SLT_SAT", "SUB", "SUB_SAT", "SWZ", "SWZ_SAT", 
+    "TEMP", "TEX", "TEX_SAT", "TXB", "TXB_SAT", "TXP", "TXP_SAT", 
+    "XPD", "XPD_SAT", 
+    "fragment", 
+    "program", 
+    "result", 
+    "state", 
+    "texture",
+    NULL
+};
+
+static void handle_keyword(GtkTextBuffer* buf, gint s, gint e ) 
+{
+    GtkTextIter start;
+    GtkTextIter end;
+    gchar* str;
+    guint i =0;
+
+    gtk_text_buffer_get_iter_at_offset(buf, &start, s );
+    gtk_text_buffer_get_iter_at_offset(buf, &end, e );
+
+    /* first remove any possible old keyword tags */
+    gtk_text_buffer_remove_tag_by_name(buf, "keyword", &start, &end );
+
+    str =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
+
+    while(KEYWORDS_ARB_VP10[i]!=NULL ) {
+      if(0 == g_ascii_strcasecmp(KEYWORDS_ARB_VP10[i], str ) ) {
+	gtk_text_buffer_apply_tag_by_name(buf, "keyword", &start, &end );
+	/* g_print("TAGGED: %s\n", str ); */
+	return;
+      }
+
+      i++;
+    }
+
+    /* not required: it is not a keyword, reset it to a normal text */
+    /* gtk_text_buffer_apply_tag_by_name(buf, "normal", &start, &end ); */
+
+}
+
+gboolean is_separator(const gchar* c )
+{
+  
+
+  if( (0 == g_ascii_strncasecmp(c, " ", 1 ))
+      ||(0 == g_ascii_strncasecmp(c, "", 1 ))
+      ||(0 == g_ascii_strncasecmp(c, ".", 1 ))
+      ||(0 == g_ascii_strncasecmp(c, ",", 1 ))
+      ||(0 == g_ascii_strncasecmp(c, ";", 1 ))
+      ||(0 == g_ascii_strncasecmp(c, "\t", 1 ))
+      ||(0 == g_ascii_strncasecmp(c, "\n", 1 ))
+      ||(0 == g_ascii_strncasecmp(c, "#", 1 )) )
+
+    {
+      //g_print("is_separator(): %s\n", c );
+      return TRUE;
+    }
+  
+  return FALSE;
+}
+
+static void syntax_highlight_buffer()
+{
+
+  GtkTextBuffer* buf;
+  GtkTextIter start;
+  GtkTextIter end;
+
+  gchar* txt;
+
+  gint i;
+  gint max;
+
+  GString* tmp;
+
+  tmp =g_string_new("");
+
+  buf =gtk_text_view_get_buffer(vp_txt_view );
+
+  i =0;
+
+  max =gtk_text_buffer_get_char_count(buf);
+
+  //g_print("max =%d\n", max );
+
+  while(TRUE ) {
+
+    gint j =i;
+
+    while(TRUE ) {
+      gtk_text_buffer_get_iter_at_offset(buf, &start, j );
+      gtk_text_buffer_get_iter_at_offset(buf, &end, j+1 );
+      txt =gtk_text_buffer_get_text(buf, &start, &end, TRUE );
+      
+      if(j > max ) {
+	//break; //end of buffer reached
+	g_print("goto: %d\n", j );
+	goto endp;
+      }
+
+      if(is_separator(txt ) ) {
+
+	/* print the buffer */
+	//g_print("buffer: %s\n", tmp->str );
+
+	handle_keyword(buf,i, j );
+
+	/* print the separator */
+	//g_print("separator: %s\n", txt );
+	
+	/* reset the buffer */
+	tmp =g_string_erase(tmp, 0, -1 );
+
+	i =j+1;
+	break;
+      }
+
+      tmp =g_string_append(tmp, txt );
+      j++;
+    }
+
+  }
+
+ endp:
+
+
+}
 
 static void print_error_to_console(const char* err_msg ) {
 
@@ -57,7 +228,7 @@ static void print_error_to_console(const char* err_msg ) {
     gtk_text_buffer_get_end_iter(console_txt_buffer, &end );
 
     /* apply a tag */
-    gtk_text_buffer_apply_tag(console_txt_buffer, tag, &start, &end );
+    gtk_text_buffer_apply_tag_by_name(console_txt_buffer, "italic", &start, &end );
     //gtk_text_buffer_apply_tag_by_name(console_txt_buffer, "martin", &start, &end );
     
     /* free the mark */
@@ -155,10 +326,7 @@ static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
 
 
 
-/* private util functions */
 
-//debug msg counter
-static unsigned int counter =0;
 
 static void gsc_refresh_visible_areas() {
 
@@ -672,26 +840,33 @@ gboolean on_vp_textview_toggle_overwrite(GtkWidget* widget, GdkEventMotion* even
 gboolean on_vp_textview_key_press_event(GtkWidget* widget, GdkEventMotion* event, gpointer data )
 {
     g_printf("%u: on_vp_textview_key_press_event()\n", counter++ );
+
+    syntax_highlight_buffer();
+  
     return FALSE;
 }
 
 gboolean on_vp_textview_key_release_event(GtkWidget* widget, GdkEventMotion* event, gpointer data )
 {
-    //GtkTextIter iter;
-    GtkTextIter start, end;
-    GtkTextBuffer *buffer;
-    gchar* txt;
-    //int i;
+/*     //GtkTextIter iter; */
+/*     GtkTextIter start, end; */
+/*     GtkTextBuffer *buffer; */
+/*     gchar* txt; */
+/*     //int i; */
   
     g_printf("%u: on_vp_textview_key_release_event()\n", counter++ );
 
-    buffer = gtk_text_view_get_buffer(widget );
+/*     buffer = gtk_text_view_get_buffer(widget ); */
 
-    gtk_text_buffer_get_start_iter(buffer, &start );
-    gtk_text_buffer_get_end_iter(buffer, &end );
-    txt =gtk_text_buffer_get_text(buffer, &start, &end, FALSE );
+/*     gtk_text_buffer_get_start_iter(buffer, &start ); */
+/*     gtk_text_buffer_get_end_iter(buffer, &end ); */
+/*     txt =gtk_text_buffer_get_text(buffer, &start, &end, FALSE ); */
     
-    g_printf("%u: on_vp_textview_key_release_event() text: %s \n", counter++, txt );
+/*     g_printf("%u: on_vp_textview_key_release_event() text: %s \n", counter++, txt ); */
+
+
+    syntax_highlight_buffer();
+
 
     return FALSE;
 }
@@ -735,13 +910,18 @@ void on_toolbutton_compile_execute_shader_clicked(GtkWidget* widget, gpointer da
   gchar* vp_txt;
   gchar* fp_txt;  
 
+  GtkTextBuffer* vpb;
+
   g_printf("%u: on_toolbutton_compile_execute_shader_clicked()\n", counter++ );  
 
   struct shader_txt_buffers_t* shaders =(struct shader_txt_buffers_t*)data;
 
-  gtk_text_buffer_get_start_iter(shaders->vp_buffer, &start );
-  gtk_text_buffer_get_end_iter(shaders->vp_buffer, &end );
-  vp_txt =gtk_text_buffer_get_text(shaders->vp_buffer, &start, &end, FALSE );
+  vpb =shaders->vp_buffer;
+
+  gtk_text_buffer_get_start_iter(vpb, &start );
+
+  gtk_text_buffer_get_end_iter(vpb, &end );
+  vp_txt =gtk_text_buffer_get_text(vpb, &start, &end, FALSE );
   g_printf("%u: Vertex Shader string:\n%s\n", counter++, vp_txt );
 
   gtk_text_buffer_get_start_iter(shaders->fp_buffer, &start );

@@ -33,6 +33,9 @@ GtkWidget* main_window;
 GtkWidget* gsc_quit_dialog;
 GtkWidget* console_txt_view;
 
+GtkWidget* fp_txt_view;
+GtkWidget* vp_txt_view;
+
 //GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
 
 GtkTextTag *tag;
@@ -43,9 +46,6 @@ int main(int argc, char *argv[] )
   GladeXML* xml;
   GdkGLConfig* glconfig;
   GtkWidget* drawing_area;
-
-  GtkTextView* vp_txt_view;
-  GtkTextView* fp_txt_view;
 
   gboolean dummy;
 
@@ -182,13 +182,6 @@ int main(int argc, char *argv[] )
 
 
   console_txt_view =glade_xml_get_widget(xml, "console_textview" );
-  tag =gtk_text_buffer_create_tag(gtk_text_view_get_buffer(console_txt_view), 
-				  "martin", 
-				  "weight", 500,
-				  "foreground", "red",
-				  "background", "blue",
-				  "style", PANGO_STYLE_ITALIC,
-				  NULL );
 
 
   printf("drawing_area: %u\n", drawing_area );
@@ -210,6 +203,35 @@ int main(int argc, char *argv[] )
 
   shader_buffers.vp_buffer =gtk_text_view_get_buffer(vp_txt_view );
   shader_buffers.fp_buffer =gtk_text_view_get_buffer(fp_txt_view );
+
+
+  /* test tag 'keyword' for syntax highlight */
+  gtk_text_buffer_create_tag(gtk_text_view_get_buffer(console_txt_view), 
+			     "keyword",
+			     "weight", 5000,
+			     "foreground", "blue",
+			     NULL );
+
+  gtk_text_buffer_create_tag(shader_buffers.vp_buffer,
+			     "normal",
+			     "weight", 50,
+			     "foreground", "black",
+			     //"background", "green",
+			     NULL );
+
+  gtk_text_buffer_create_tag(shader_buffers.vp_buffer, 
+			     "keyword",
+			     "weight", 5000,
+			     "foreground", "blue",
+			     "background", "white",
+			     NULL );
+
+  gtk_text_buffer_create_tag(shader_buffers.vp_buffer, 
+			     "comment",
+			     "style", PANGO_STYLE_ITALIC,
+			     "foreground", "green",
+			     NULL );
+
 
   glade_xml_signal_connect_data(xml, 
 				"on_toolbutton_compile_execute_shader_clicked", 
