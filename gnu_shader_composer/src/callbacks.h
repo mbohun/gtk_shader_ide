@@ -1,5 +1,7 @@
 #include <gtk/gtk.h>
-
+#include <gtk/gtkgl.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 void
 on_new1_activate                       (GtkMenuItem     *menuitem,
@@ -41,16 +43,13 @@ void
 on_about1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
+
+
 void
-on_drawing_area_realize                (GtkWidget       *widget,
-                                        gpointer         user_data);
+on_drawing_area_realize (GtkWidget* widget, gpointer user_data );
 
 gboolean
-on_drawing_area_configure_event        (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data);
+on_drawing_area_configure_event (GtkWidget* widget, GdkEventConfigure* event, gpointer user_data );
 
 gboolean
-on_drawing_area_expose_event           (GtkWidget       *widget,
-                                        GdkEventExpose  *event,
-                                        gpointer         user_data);
+on_drawing_area_expose_event (GtkWidget* widget, GdkEventExpose* event, gpointer user_data );
