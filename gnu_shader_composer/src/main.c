@@ -15,10 +15,6 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-//#include "gl_ext.h"
-
-//#include <gdk/gdkglglext.h>
-
 #include "support.h"
 
 #include "callbacks.h"
@@ -37,6 +33,7 @@ GtkWidget* fp_txt_view;
 GtkWidget* vp_txt_view;
 
 #ifndef GL_FRAGMENT_PROGRAM_ARB /* crappy condition */
+#include <gdk/gdkglglext.h>
 GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
 #endif
 
