@@ -8,8 +8,6 @@
 
 //#include "gl_ext.h"
 
-/* #include <gdk/gdkglglext.h> */
-
 #include "callbacks.h"
 #include "support.h"
 #include "trackball.h"
@@ -31,6 +29,7 @@ extern GtkTextView* vp_txt_view;
 extern GtkTextView* fp_txt_view;
 
 #ifndef GL_FRAGMENT_PROGRAM_ARB /* crappy condition */
+#include <gdk/gdkglglext.h>
 extern GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
 static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
 {
