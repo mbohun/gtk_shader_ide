@@ -73,6 +73,7 @@ static void compile_execute_vpfp(char* test_arb_vp, char* test_arb_fp )
 	//g_print("Vertex Program ERROR: %s\n", glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
 	print_error_to_console(glGetString(GL_PROGRAM_ERROR_STRING_ARB) );
 	glDisable(GL_VERTEX_PROGRAM_ARB );
+
 	return;
     }
 

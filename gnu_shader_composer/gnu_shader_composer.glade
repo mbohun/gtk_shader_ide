@@ -302,6 +302,7 @@
 	      <child>
 		<widget class="GtkToolButton" id="toolbutton_remove_shaders">
 		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">Remove Shaders</property>
 		  <property name="stock_id">gtk-cancel</property>
 		  <property name="visible_horizontal">True</property>
 		  <property name="visible_vertical">True</property>
