@@ -34,6 +34,7 @@ GtkWidget* vp_txt_view;
 GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
 #endif
 
+/* test */
 GtkTextTag *tag;
 
 int main(int argc, char *argv[] )
