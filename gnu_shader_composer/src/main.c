@@ -25,6 +25,10 @@ GtkWidget* main_window;
 GtkWidget* gsc_quit_dialog;
 GtkWidget* console_txt_view;
 
+GtkWidget* gsc_about_window;
+
+gchar** ext_arr; //array of OpenGL extensions
+
 GtkWidget* fp_txt_view;
 GtkWidget* vp_txt_view;
 
@@ -37,6 +41,12 @@ GdkGL_GL_ARB_vertex_program* gdk_glext_vp;
 /* test */
 GtkTextTag *tag;
 
+/* check how to use atexit() properly with glib/gtk+ */
+void hooky(void) {
+  g_print ("hooky !\n");
+  g_strfreev(ext_arr);
+}
+
 int main(int argc, char *argv[] )
 {
 
@@ -47,6 +57,11 @@ int main(int argc, char *argv[] )
   gboolean dummy;
 
   struct shader_txt_buffers_t shader_buffers;
+
+  char* ext_str;
+
+  int i;
+
 
 #ifdef G_OS_WIN32
   gchar *temp;
@@ -287,7 +302,25 @@ int main(int argc, char *argv[] )
 
   gtk_widget_show(main_window);
 
-  /* !!! the GL extension must be loaded AFTER the gl widget was shown */
+
+  ext_str =glGetString(GL_EXTENSIONS);
+
+  ext_arr =g_strsplit(/*(const gchar*)*/ext_str, " ", -1 );
+
+  for(i=0;;i++) {
+    gchar* e =ext_arr[i];
+    if(e==NULL) {
+      break;
+    }
+
+    g_printf("%s\n", e );
+    
+  }
+
+  atexit(hooky);
+
+
+/* !!! the GL extension must be loaded AFTER the gl widget was shown */
 #ifdef OLD_GL_VERSION /* crappy condition */
   gdk_glext_vp =gdk_gl_get_GL_ARB_vertex_program();
   if(NULL == gdk_glext_vp ) { 
