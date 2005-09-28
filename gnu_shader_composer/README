@@ -5,4 +5,4 @@ In order to run this crap, do the following:
 	2. run make
 	3. copy the gnu_shader_composer.glade file into the src dir
 	4. change to the src dir and run gnu_shader_composer.exe
-
+	5. there is no point 5
