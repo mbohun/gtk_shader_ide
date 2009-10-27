@@ -82,3 +82,5 @@ void vp_txt_buffer_changed_handler(GtkTextBuffer *textbuffer, gpointer user_dat 
 
 /* fp text buffer handler */
 void fp_txt_buffer_changed_handler(GtkTextBuffer *textbuffer, gpointer user_dat );
+
+static void print_error_to_console(const char* err_msg );
