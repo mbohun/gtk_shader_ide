@@ -1,0 +1,49 @@
+dnl Process this file with autoconf to produce a configure script.
+
+AC_INIT(configure.in)
+AC_CANONICAL_SYSTEM
+AM_INIT_AUTOMAKE(gnu_shader_composer, 0.1)
+AM_CONFIG_HEADER(config.h)
+
+AC_ISC_POSIX
+AC_PROG_CC
+AM_PROG_CC_STDC
+AC_HEADER_STDC
+AM_SANITY_CHECK
+
+PKG_CHECK_MODULES(GTK, gtk+-2.0)
+PKG_CHECK_MODULES(GTKGLEXT, gtkglext-1.0)
+PKG_CHECK_MODULES(LIBGLADE, libglade-2.0)
+
+case "${target_os}" in
+  *mingw32* | *cygwin*)
+    AC_CHECK_TOOL(WINDRES, windres, :)
+    PACKAGE_CFLAGS="$PACKAGE_CFLAGS -mms-bitfields -mno-cygwin"
+    PACKAGE_LIBS="$PACKAGE_LIBS -mwindows -mno-cygwin -Wl,--export-all-symbols"
+esac
+
+GTK_CFLAGS="`pkg-config gtk+-2.0 --cflags`"
+GTK_LIBS="`pkg-config gtk+-2.0 --libs`"
+
+GTKGLEXT_CFLAGS="`pkg-config gtkglext-1.0 --cflags`"	
+GTKGLEXT_LIBS="`pkg-config gtkglext-1.0 --libs`"
+
+LIBGLADE_CFLAGS="`pkg-config libglade-2.0 --cflags`"	
+LIBGLADE_LIBS="`pkg-config libglade-2.0 --libs`"
+
+AC_SUBST(PACKAGE_CFLAGS)
+AC_SUBST(PACKAGE_LIBS)
+
+GETTEXT_PACKAGE=gnu_shader_composer
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package.])
+
+dnl Add the languages which your application supports here.
+ALL_LINGUAS=""
+AM_GLIB_GNU_GETTEXT
+
+AC_OUTPUT([
+Makefile
+src/Makefile
+po/Makefile.in
+])
