@@ -15,8 +15,9 @@ build prerequisites
 - nVidia / AMD / Intel gfx card
 
 NOTES:
-- if you want to build on windoze you will need mingw (gcc, make), pkg-config/gtk+-2.0/glade-2.0/gtkglext-1.0 for windoze like those available in an one-click install from: [gladewin32.sourceforge.net](http://gladewin32.sourceforge.net)
-- some linux distros separate packages into 'runtime' and 'development' and the development part is often not installed by default, you will need those installed (for example: 'sudo yum install libglade2-devel.i686' to install libglade2 devel package), to give you an idea what is required here is a sample output of ldd ./gtk_shader_composer:
+1. if you want to build on windoze you will need mingw (gcc, make), pkg-config/gtk+-2.0/glade-2.0/gtkglext-1.0 for windoze like those available in an one-click install from: [gladewin32.sourceforge.net](http://gladewin32.sourceforge.net)
+2. some linux distros separate packages into 'runtime' and 'development' and the development part is often not installed by default, you will need those installed (for example: 'sudo yum install libglade2-devel.i686' to install libglade2  devel package), to give you an idea what is required here is a sample ldd output:
+```
 martin@yobbo:~/src/gtk_shader_ide/src$ ldd ./gtk_shader_composer
         linux-gate.so.1 =>  (0xffffe000)
         libm.so.6 => /lib/libm.so.6 (0x77731000)
@@ -76,7 +77,7 @@ martin@yobbo:~/src/gtk_shader_ide/src$ ldd ./gtk_shader_composer
         libnvidia-tls.so.304.64 => /usr/lib/tls/libnvidia-tls.so.304.64 (0x761e1000)
         libnvidia-glcore.so.304.64 => /usr/lib/libnvidia-glcore.so.304.64 (0x744db000)
         libuuid.so.1 => /lib/libuuid.so.1 (0x744d7000)
-
+```
 
 build
 -----
