@@ -14,9 +14,9 @@
 
 NOTES:
 
-1. if you want to build on windoze you will need mingw (gcc, make), pkg-config/gtk+-2.0/glade-2.0/gtkglext-1.0 for windoze like those available in an one-click install from: [gladewin32.sourceforge.net](http://gladewin32.sourceforge.net)
+1. if you want to build on windoze you will need mingw (gcc, make), pkg-config/gtk+-2.0/glade-2.0/gtkglext-1.0 for windoze like those available in an one-click install from [gladewin32.sourceforge.net](http://gladewin32.sourceforge.net)
 
-2. some linux distros separate packages into 'runtime' and 'development' and the development part is often not installed by default, you will need those installed (for example: 'sudo yum install libglade2-devel.i686' to install libglade2  devel package), to give you an idea what is required here is a sample ldd output:
+2. some linux distros separate packages into 'runtime' and 'development' and the development part is often not installed by default, you will need those installed (for example: 'sudo yum install libglade2-devel.i686' to install libglade2  devel package on a Fedora 16 32bit), to give you an idea what everything is required here is a sample ldd output (while the long list might look scary most of these libs are already installed on most 'modern' linux distros):
 
 ```
 martin@yobbo:~/src/gtk_shader_ide/src$ ldd ./gtk_shader_composer
