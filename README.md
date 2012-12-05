@@ -16,6 +16,8 @@ build prerequisites
 
 build
 -----
+$ git clone git://github.com/mbohun/gtk_shader_ide.git
+
 $ ./autogen.sh
 
 $ ./configure
