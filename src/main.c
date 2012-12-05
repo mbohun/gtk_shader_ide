@@ -111,7 +111,7 @@ int main(int argc, char *argv[] )
 #endif
 
 
-  xml =glade_xml_new ("gnu_shader_composer.glade", NULL, NULL );
+  xml =glade_xml_new ("gtk_shader_composer.glade", NULL, NULL );
 
   //autoconnect does NOT work with data !
   //glade_xml_signal_autoconnect(xml );

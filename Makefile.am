@@ -4,8 +4,8 @@ SUBDIRS = src po
 
 EXTRA_DIST = \
 	autogen.sh \
-	gnu_shader_composer.glade \
-	gnu_shader_composer.gladep
+	gtk_shader_composer.glade \
+	gtk_shader_composer.gladep
 
 install-data-local:
 	@$(NORMAL_INSTALL)
