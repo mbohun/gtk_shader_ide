@@ -50,6 +50,7 @@ have fun
 
 TODO:
 -----
+- add proper signal handling, etc.
 - add support for some configuration file (~/.gtk_shader_iderc or ~/.config/gtk_shader_ide/iderc)
 - embed the XML GUI (src/gtk_shader_ide.glade) into the executable
 - replace the handwritten syntax highlighting function with [gtksourceview](http://projects.gnome.org/gtksourceview) (if possible - as in not going to pull in whole GNOME project :-) as a _dependency_ )
