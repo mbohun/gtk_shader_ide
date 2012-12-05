@@ -32,19 +32,15 @@ $ ./gtk_shader_ide
 
 copy & paste the test !!ARBvp1.0 program [doc/test.arbvp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/test.arbvp) into the "Vertex Shader" editor
 
-![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
+![Alt text](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/session/00-arbvp.png "test.arbvp")
 
-switch to the "Fragment Shader" editor and copy & paste in the !!ARBfp1.0 program [doc/basic.arbfp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/basic.arbfp)
+switch to the "Fragment Shader" editor and copy & paste in the !!ARBfp1.0 program [doc/basic.arbfp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/basic.arbfp) and press the "Compile and Execute Shaders" toolbar button
 
-![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
-
-press the "Compile and Execute Shaders" toolbar button
-
-![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
+![Alt text](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/session/01-arbfp-basic.png "basic.arbfp")
 
 delete the fragment program from the "Fragment Shader" editor and copy & paste in [doc/grayscale.arbfp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/grayscale.arbfp) and press the "Compile and Execute Shaders" toolbar button again
 
-![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
+![Alt text](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/session/02-arbfp-grayscale.png "grayscale.arbfp")
 
 have fun 
 
