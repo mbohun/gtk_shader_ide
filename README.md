@@ -16,6 +16,8 @@ build prerequisites
 
 build
 -----
+$ ./autogen.sh
+
 $ ./configure
 
 $ make
