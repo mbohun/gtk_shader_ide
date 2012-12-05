@@ -42,7 +42,7 @@ delete the fragment program from the "Fragment Shader" editor and copy & paste i
 
 ![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
 
-- have fun 
+have fun 
 
 TODO:
 -----
