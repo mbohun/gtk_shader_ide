@@ -16,6 +16,7 @@ NOTES:
 1. if you want to build on windoze you will need mingw (gcc, make), pkg-config/gtk+-2.0/glade-2.0/gtkglext-1.0 for windoze like those available in an one-click install from: [gladewin32.sourceforge.net](http://gladewin32.sourceforge.net)
 
 2. some linux distros separate packages into 'runtime' and 'development' and the development part is often not installed by default, you will need those installed (for example: 'sudo yum install libglade2-devel.i686' to install libglade2  devel package), to give you an idea what is required here is a sample ldd output:
+
 ```
 martin@yobbo:~/src/gtk_shader_ide/src$ ldd ./gtk_shader_composer
         linux-gate.so.1 =>  (0xffffe000)
@@ -95,19 +96,19 @@ $ cd src
 
 $ ./gtk_shader_ide
 
-copy & paste the test !!ARBvp1.0 program [doc/test.arbvp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/test.arbvp) into the "Vertex Shader" editor
+Copy & paste the test !!ARBvp1.0 program [doc/test.arbvp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/test.arbvp) into the "Vertex Shader" editor
 
 ![Alt text](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/session/00-arbvp.png "test.arbvp")
 
-switch to the "Fragment Shader" editor and copy & paste in the !!ARBfp1.0 program [doc/basic.arbfp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/basic.arbfp) and press the "Compile and Execute Shaders" toolbar button
+Switch to the "Fragment Shader" editor and copy & paste in the !!ARBfp1.0 program [doc/basic.arbfp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/basic.arbfp) and press the "Compile and Execute Shaders" toolbar button
 
 ![Alt text](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/session/01-arbfp-basic.png "basic.arbfp")
 
-delete the fragment program from the "Fragment Shader" editor and copy & paste in [doc/grayscale.arbfp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/grayscale.arbfp) and press the "Compile and Execute Shaders" toolbar button again
+Delete the fragment program from the "Fragment Shader" editor and copy & paste in [doc/grayscale.arbfp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/grayscale.arbfp) and press the "Compile and Execute Shaders" toolbar button again
 
 ![Alt text](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/session/02-arbfp-grayscale.png "grayscale.arbfp")
 
-have fun 
+have fun ...
 
 ## TODO:
 -----
