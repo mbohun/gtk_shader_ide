@@ -26,11 +26,11 @@ $ cd src
 
 $ ./gtk_shader_ide
 
-copy & paste the test !!ARBvp1.0 program doc/test.arbvp into the "Vertex Shader" editor
+copy & paste the test !!ARBvp1.0 program [doc/test.arbvp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/test.arbvp) into the "Vertex Shader" editor
 
 ![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
 
-switch to the "Fragment Shader" editor and copy & paste in the !!ARBfp1.0 program doc/basic.arbfp
+switch to the "Fragment Shader" editor and copy & paste in the !!ARBfp1.0 program [doc/basic.arbfp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/basic.arbfp)
 
 ![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
 
@@ -38,7 +38,7 @@ press the "Compile and Execute Shaders" toolbar button
 
 ![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
 
-delete the fragment program from the "Fragment Shader" editor and copy & paste in doc/grayscale.arbfp and press the "Compile and Execute Shaders" toolbar button again
+delete the fragment program from the "Fragment Shader" editor and copy & paste in [doc/grayscale.arbfp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/grayscale.arbfp) and press the "Compile and Execute Shaders" toolbar button again
 
 ![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
 
