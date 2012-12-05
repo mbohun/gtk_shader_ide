@@ -28,7 +28,7 @@ $ ./gtk_shader_ide
 ![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
 
 - switch to the "Fragment Shader" editor and copy & paste in the !!ARBfp1.0 program doc/basic.arbfp
-![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08"
+![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
 
 - press the "Compile and Execute Shaders" toolbar button
 ![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
@@ -41,6 +41,6 @@ $ ./gtk_shader_ide
 TODO:
 -----
 - embed the XML GUI (src/gtk_shader_ide.glade) into the executable
-- replace the handwritten syntax highlighting function with [gtksourceview](http://projects.gnome.org/gtksourceview) if possible (as in not going to drag in whole GNOME project :-) as a _dependency_ )
+- replace the handwritten syntax highlighting function with [gtksourceview](http://projects.gnome.org/gtksourceview) (if possible - as in not going to pull in whole GNOME project :-) as a _dependency_ )
 - expose OpenGL state to the IDE
 - add features like loading textures, etc.
