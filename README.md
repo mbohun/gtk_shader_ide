@@ -1,13 +1,11 @@
-gtk_shader_ide
-==============
+# gtk_shader_ide
 - minimalist portable boilerplate GUI [gtk+-2.0](http://www.gtk.org)/[libglade](http://developer.gnome.org/libglade) project (fully functional example/demo)
 - [GNU autotools](http://en.wikipedia.org/wiki/GNU_build_system) & [pkg-config](http://www.freedesktop.org/wiki/Software/pkg-config)
 - with (optional) use of [GtkGLExt](http://projects.gnome.org/gtkglext), if you want to use [OpenGL](http://www.opengl.org) [!!ARBvp1.0](http://www.opengl.org/registry/specs/ARB/vertex_program.txt)/[!!ARBfp1.0](http://www.opengl.org/registry/specs/ARB/fragment_program.txt)
 
-![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041019-shadowsoft.png "2004-10-19")
+![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08, GUI mockup with GLSL code")![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041019-shadowsoft.png "2004-10-19, one of the first real sessions")
 
-build prerequisites
--------------------
+## build prerequisites
 - gtk+-2.0
 - gtkglext (not required if you don't want OpenGL and remove the gtkglext/OpenGL specific parts)
 - pkg-config
@@ -16,6 +14,7 @@ build prerequisites
 
 NOTES:
 1. if you want to build on windoze you will need mingw (gcc, make), pkg-config/gtk+-2.0/glade-2.0/gtkglext-1.0 for windoze like those available in an one-click install from: [gladewin32.sourceforge.net](http://gladewin32.sourceforge.net)
+
 2. some linux distros separate packages into 'runtime' and 'development' and the development part is often not installed by default, you will need those installed (for example: 'sudo yum install libglade2-devel.i686' to install libglade2  devel package), to give you an idea what is required here is a sample ldd output:
 ```
 martin@yobbo:~/src/gtk_shader_ide/src$ ldd ./gtk_shader_composer
@@ -79,8 +78,8 @@ martin@yobbo:~/src/gtk_shader_ide/src$ ldd ./gtk_shader_composer
         libuuid.so.1 => /lib/libuuid.so.1 (0x744d7000)
 ```
 
-build
------
+## build
+
 $ git clone git://github.com/mbohun/gtk_shader_ide.git
 
 $ ./autogen.sh
@@ -91,8 +90,7 @@ $ make
 
 if you do not want to build it grab prebuilt binary from the [release](https://github.com/mbohun/gtk_shader_ide/tree/master/release) subdir or from my [fileserver](http://users.on.net/~mbohun/src/2004-10-19-demo_shader_ide) (note you need both the binary and the .glade file)
 
-run & test
-----------
+## run & test
 $ cd src
 
 $ ./gtk_shader_ide
@@ -111,7 +109,7 @@ delete the fragment program from the "Fragment Shader" editor and copy & paste i
 
 have fun 
 
-TODO:
+## TODO:
 -----
 - add proper signal handling, etc.
 - add support for some configuration file (~/.gtk_shader_iderc or ~/.config/gtk_shader_ide/iderc)
