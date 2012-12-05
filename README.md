@@ -9,7 +9,7 @@ gtk_shader_ide
 build prerequisites
 -------------------
 - gtk+-2.0
-- gtkglext
+- gtkglext (not required if you don't want OpenGL and remove the gtkglext/OpenGL specific parts)
 - pkg-config
 - GNU autotools
 - nVidia / AMD / Intel gfx card
@@ -19,6 +19,8 @@ build
 $ ./configure
 
 $ make
+
+if you do not want to build it grab prebuilt binary from the [release](https://github.com/mbohun/gtk_shader_ide/tree/master/release) subdir or from my [fileserver](http://users.on.net/~mbohun/src/2004-10-19-demo_shader_ide) (note you need both the binary and the .glade file)
 
 run & test
 ----------
@@ -46,6 +48,7 @@ have fun
 
 TODO:
 -----
+- add support for some configuration file (~/.gtk_shader_iderc or ~/.config/gtk_shader_ide/iderc)
 - embed the XML GUI (src/gtk_shader_ide.glade) into the executable
 - replace the handwritten syntax highlighting function with [gtksourceview](http://projects.gnome.org/gtksourceview) (if possible - as in not going to pull in whole GNOME project :-) as a _dependency_ )
 - expose OpenGL state to the IDE
