@@ -1,0 +1,12 @@
+!!ARBfp1.0
+
+# output_R = input_R * 0.30
+# output_G = input_G * 0.59
+# output_B = input_B * 0.11
+# output_A = input_A * 1.00; # irrelevant with DP3
+#
+PARAM RGBA = {0.30, 0.59, 0.11, 1.00 };
+
+DP3 result.color, fragment.color, RGBA;
+
+END
