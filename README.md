@@ -6,7 +6,41 @@ gtk_shader_ide
 
 ![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041019-shadowsoft.png "2004-10-19")
 
+build prerequisites
+-------------------
+- gtk+-2.0
+- gtkglext
+- pkg-config
+- GNU autotools
+- nVidia / AMD / Intel gfx card
+
+build
+-----
+$ ./configure
+$ make
+
+run & test
+----------
+$ cd src
+$ ./gtk_shader_ide
+
+- copy & paste the test !!ARBvp1.0 program doc/test.arbvp into the "Vertex Shader" editor
+![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
+
+- switch to the "Fragment Shader" editor and copy & paste in the !!ARBfp1.0 program doc/basic.arbfp
+![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08"
+
+- press the "Compile and Execute Shaders" toolbar button
+![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
+
+- delete the fragment program from the "Fragment Shader" editor and copy & paste in doc/grayscale.arbfp and press the "Compile and Execute Shaders" toolbar button again
+![Alt text](https://github.com/mbohun/gtk_shader_ide/raw/master/doc/small_gsc_screenshot_20041008-shadowsoft.png "2004-10-08")
+
+- have fun 
+
 TODO:
 -----
+- embed the XML GUI (src/gtk_shader_ide.glade) into the executable
+- replace the handwritten syntax highlighting function with [gtksourceview](http://projects.gnome.org/gtksourceview) if possible (as in not going to drag in whole GNOME project :-) as a _dependency_ )
 - expose OpenGL state to the IDE
 - add features like loading textures, etc.
