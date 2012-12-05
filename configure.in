@@ -15,6 +15,8 @@ PKG_CHECK_MODULES(GTK, gtk+-2.0)
 PKG_CHECK_MODULES(GTKGLEXT, gtkglext-1.0)
 PKG_CHECK_MODULES(LIBGLADE, libglade-2.0)
 
+LDFLAGS="$LDFLAGS -lm"
+
 case "${target_os}" in
   *mingw32* | *cygwin*)
     AC_CHECK_TOOL(WINDRES, windres, :)
