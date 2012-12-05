@@ -1,0 +1,7 @@
+!!ARBfp1.0
+
+# output = input;
+#
+MOV result.color, fragment.color;
+
+END
