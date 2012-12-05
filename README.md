@@ -82,21 +82,20 @@ martin@yobbo:~/src/gtk_shader_ide/src$ ldd ./gtk_shader_composer
 ```
 
 ## build
-
+```
 $ git clone git://github.com/mbohun/gtk_shader_ide.git
-
 $ ./autogen.sh
-
 $ ./configure
-
 $ make
+```
 
 if you do not want to build it grab prebuilt binary from the [release](https://github.com/mbohun/gtk_shader_ide/tree/master/release) subdir or from my [fileserver](http://users.on.net/~mbohun/src/2004-10-19-demo_shader_ide) (note you need both the binary and the .glade file)
 
 ## run & test
+```
 $ cd src
-
 $ ./gtk_shader_ide
+```
 
 Copy & paste the test !!ARBvp1.0 program [doc/test.arbvp](https://raw.github.com/mbohun/gtk_shader_ide/master/doc/test.arbvp) into the "Vertex Shader" editor
 
