@@ -84,6 +84,7 @@ martin@yobbo:~/src/gtk_shader_ide/src$ ldd ./gtk_shader_composer
 ## build
 ```
 $ git clone git://github.com/mbohun/gtk_shader_ide.git
+$ cd gtk_shader_ide
 $ ./autogen.sh
 $ ./configure
 $ make
